@@ -18,6 +18,7 @@
     "dotenv": "^17.2.3",
     "hono": "^4.11.7",
     "jsmediatags": "^3.9.7",
+    "motion": "^12.29.2",
     "node-fetch": "^3.3.2",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",

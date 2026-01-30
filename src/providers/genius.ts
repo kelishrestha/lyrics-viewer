@@ -1,4 +1,5 @@
 import dotenv from 'dotenv'
+import { source } from 'motion/react-client'
 
 dotenv.config()
 // Also try src/.env for projects that keep env alongside sources
@@ -21,9 +22,22 @@ const removeAccents = (str: string): string => {
 
 const cleanedString = (userInput: string): string => {
   userInput = removeAccents(userInput);
-  return userInput.replace(/[^\x20-\x7E\t\n\r]/g, "");
+  return userInput.replace(/[^\x20-\x7E\t\n\r]/g, "").replace(/\(\(\)\)/g, '').trim();
 }
 
+function normalizeText(text: string) {
+  return text
+    .normalize("NFKC")
+    .replace(/[’‘]/g, "'")
+    .replace(/[“”]/g, '"')
+    .replace(/\s+/g, " ")
+    .trim()
+}
+
+// Check if title is a substring in response title
+const titleSubStringCheck = (sourceText: string, targetText: string) => {
+  return sourceText.replace('(','').replace(')', '').split(' ').every(item => targetText.split(' ').includes(item))
+}
 
 function withTimeout(ms: number) {
   const ctrl = new AbortController()
@@ -80,24 +94,43 @@ export async function searchGenius(artist: string, title: string) {
   let matchedHit = firstHit;
   let matched = true;
   if (firstHit.result.title != (title) && firstHit.result.primary_artist.name != (artist)){
-    console.log(search.response.hits, 63);
     // Check if the first hit is a hit or miss
     const allHits = search.response.hits
     if (allHits.length > 1) {
-      allHits.forEach((hit: any) => {
+      console.log(`----- Title: ${title}, Cleaned title: ${cleanedString(title)}, Artist: ${artist} ------`, 87)
+      for(const hit of allHits){
+        console.log(`======= Response title: ${hit.result.title} by ${hit.result.primary_artist.name} =======`, 88);
         if (hit.result.title == cleanedString(title) && hit.result.primary_artist.name == cleanedString(artist)) {
+          // Exact match
           matchedHit = hit;
-          return;
+          matched = true;
+          break;
+        } else if (normalizeText(hit.result.title) == normalizeText(title)){
+          // Title match without special characters removal
+          matchedHit = hit;
+          matched = true;
+          console.log(`>>>>>>> Match found for ${hit.result.title} <<<<<<<`)
+          break;
+        } else if (normalizeText(hit.result.title) == normalizeText(cleanedString(title))){
+          // Title match with cleaned title(w/o special characters)
+          matchedHit = hit;
+          matched = true;
+          console.log(`>>>>>>> Match found for ${hit.result.title} <<<<<<<`)
+          break;
+        } else if (titleSubStringCheck(title, hit.result.title)){
+          // Title substring in response title
+          matchedHit = hit;
+          matched = true;
+          console.log(`>>>>>>> Match found for ${hit.result.title} <<<<<<<`)
+          break;
         } else {
           matched = false;
-          return null;
         }
-      })
+      }
     }
   }
 
   if(!matched) return null
-  console.log(matched, 101);
   // Fetch song and artist in parallel for speed
   const song = await getSongInfo(matchedHit.result.id)
   if (!song) return null
