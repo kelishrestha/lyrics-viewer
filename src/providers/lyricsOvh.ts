@@ -37,7 +37,7 @@ async function fetchJSON<T>(url: string, init?: RequestInit, timeoutMs = 8000): 
 export async function searchLyricsOVH(artist: string, title: string) {
   try {
     const lyricsUrl = `${LYRICS_OVH_BASE_URL}/${encodeURIComponent(cleanedString(artist))}/${encodeURIComponent(cleanedString(title))}`
-    console.log(`Searching in lyrics.ovh: ${lyricsUrl}`)
+    console.log(`🔎 Searching in lyrics.ovh: ${lyricsUrl}`)
     const data = await fetchJSON<LyricsOvhSongResponse>(
       lyricsUrl
     )

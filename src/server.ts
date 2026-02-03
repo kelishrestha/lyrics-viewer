@@ -27,7 +27,7 @@ app.get('/lyrics', async c => {
   const artist = c.req.query('artist')
   const title = c.req.query('title')
 
-  console.log(`Searching for lyrics: ${title} by ${artist}`)
+  console.log(`🔎 Searching for lyrics: ${title} by ${artist}`)
 
   if (!artist || !title) {
     return c.json({ error: 'Missing artist or title' }, 400)
@@ -36,17 +36,17 @@ app.get('/lyrics', async c => {
   try {
     const lyrics = await searchLyricsOVH(artist, title)
     if(lyrics){
-      console.log('Lyrics found in lyrics.ovh')
+      console.log('✅ Lyrics found in lyrics.ovh')
       return c.json({ source: 'lyrics.ovh', lyrics })
     } else {
       // Genius
-      console.log('No lyrics found in lyrics.ovh; Searching in Genius....')
+      console.log('⚠️ No lyrics found in lyrics.ovh; Searching in Genius....')
       const genius = await searchGenius(artist, title)
       if (genius) {
-        console.log('Lyrics found in Genius')
-        return c.json({ source: 'genius', lyrics: null, url: genius.url })
+        console.log('✅ Lyrics found in Genius')
+        return c.json({ source: 'genius', lyrics: null, url: genius.url, song_details: genius.songDetails })
       } else {
-        console.log('No lyrics found in Genius')
+        console.log('⚠️ No lyrics found in Genius')
         return c.json({ source: null, lyrics: null, url: null })
       }
     }
@@ -84,4 +84,4 @@ app.get('/proxy', async c => {
 // Start server (Node runtime)
 const port = Number(process.env.PORT) || 4000
 serve({ fetch: app.fetch, port })
-console.log(`Lyrics wrapper API running at http://localhost:${port}`)
+console.log(`🔥 Lyrics wrapper API running at http://localhost:${port}`)

@@ -62,7 +62,7 @@ async function fetchJSON<T>(url: string, init?: RequestInit, timeoutMs = 8000): 
   }
 }
 
-type GeniusSongResponse = { response: { song: { url: string, title: string, primary_artist: { id: number, name: string } } } }
+type GeniusSongResponse = { response: { song: { url: string, title: string, primary_artist: { id: number, name: string }, album: any, media: any, translation_songs: any} } }
 type GeniusArtistResponse = { response: { artist: { name: string } } }
 type GeniusSearchResponse = { response: { hits: Array<{ result: { id: number, title: string, primary_artist_names: string, primary_artist: { name: string } } }> } }
 
@@ -76,10 +76,18 @@ async function getArtistInfo(artistID: number) {
   return data.response.artist
 }
 
+function compileDetailsAndTranslations(song: GeniusSongResponse['response']['song']) {
+  return {
+    album: song.album,
+    media: song.media,
+    translation_songs: song.translation_songs
+  }
+}
+
 export async function searchGenius(artist: string, title: string) {
   const q = `${cleanedString(title)} ${cleanedString(artist)}`.trim();
 
-  console.log(`Searching in Genius: ${q}`)
+  console.log(`🔎 Searching in Genius: ${q}`)
 
   // Search with short timeout to avoid hanging UI
   const search = await fetchJSON<GeniusSearchResponse>(
@@ -91,6 +99,7 @@ export async function searchGenius(artist: string, title: string) {
   const firstHit = search.response.hits?.[0]
   if (!firstHit) return null
 
+  // Find matching hits from genius
   let matchedHit = firstHit;
   let matched = true;
   if (firstHit.result.title != (title) && firstHit.result.primary_artist.name != (artist)){
@@ -109,19 +118,19 @@ export async function searchGenius(artist: string, title: string) {
           // Title match without special characters removal
           matchedHit = hit;
           matched = true;
-          console.log(`>>>>>>> Match found for ${hit.result.title} <<<<<<<`)
+          console.log(`>>>>>>> ❤️ Match found for ${hit.result.title} <<<<<<<`)
           break;
         } else if (normalizeText(hit.result.title) == normalizeText(cleanedString(title))){
           // Title match with cleaned title(w/o special characters)
           matchedHit = hit;
           matched = true;
-          console.log(`>>>>>>> Match found for ${hit.result.title} <<<<<<<`)
+          console.log(`>>>>>>> ❤️ Match found for ${hit.result.title} <<<<<<<`)
           break;
         } else if (titleSubStringCheck(title, hit.result.title)){
           // Title substring in response title
           matchedHit = hit;
           matched = true;
-          console.log(`>>>>>>> Match found for ${hit.result.title} <<<<<<<`)
+          console.log(`>>>>>>> ❤️ Match found for ${hit.result.title} <<<<<<<`)
           break;
         } else {
           matched = false;
@@ -135,6 +144,8 @@ export async function searchGenius(artist: string, title: string) {
   const song = await getSongInfo(matchedHit.result.id)
   if (!song) return null
 
+  console.log(`✅ Song found: ${song.title} by ${song.primary_artist.name}`);
+  console.log(song);
   const [artistInfo] = await Promise.all([
     getArtistInfo(song.primary_artist.id),
   ])
@@ -144,5 +155,6 @@ export async function searchGenius(artist: string, title: string) {
     url: song.url,
     title: song.title,
     artist: artistInfo.name,
+    songDetails: compileDetailsAndTranslations(song)
   }
 }

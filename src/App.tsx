@@ -10,6 +10,7 @@ type LyricsResponse = {
   source: string | null
   lyrics: string | null
   url?: string
+  song_details?: any
 }
 
 export default function App() {
