@@ -1,5 +1,3 @@
-import { useEffect } from "react"
-
 type TranslationSongs = {
   language: string,
   title: string,
@@ -37,7 +35,7 @@ function imageFromBytes(
 }
 
 
-export function SongDetail({ song }: { song: SongDetailType }): JSX.Element {
+export function SongDetail({ song, artist, title }: { song: SongDetailType, artist: string, title: string}): JSX.Element {
   if(!song) return null
 
   const releaseDate = song.album?.release_date_for_display || song.album?.year;
@@ -45,22 +43,20 @@ export function SongDetail({ song }: { song: SongDetailType }): JSX.Element {
   const coverUrl = imageFromBytes(song.album?.picture?.data, song.album?.picture?.format)
   const albumCoverImage = song.album?.cover_art_url || coverUrl
 
-  useEffect(() => {
-    return () => {
-      URL.revokeObjectURL(coverUrl)
-    }
-  }, [coverUrl])
-
   return (
-    <section className="m-1 rounded-2xl bg-linear-to-r from-sky-500 to-indigo-500 p-3">
+    <section className="m-1 rounded-2xl bg-linear-to-r from-sky-500 to-indigo-500 p-6">
       <img
         src={albumCoverImage} alt={song.album?.name}
         className="w-full h-full rounded-md"/>
-      <p className="flex flex-col my-2">
-        <span className="font-bold mt-2">{song.album?.name}</span>
+      <p className="flex flex-col my-2 gap-1 text-center">
+        <span className="font-bold text-2xl">{title}</span>
+        <span className="font-bold text-gray-300">{artist}</span>
+        <span className="text-xs text-gray-300 mt-2">Album</span>
+        <span className="font-bold text-gray-300">{song.album?.name}</span>
+      </p>
+      <p className="flex flex-col text-gray-300 gap-1 text-center">
         <span className="italic text-xs">Release date: {releaseDate}</span>
         { song.album?.genre && <span className="italic text-xs">Genre: {song.album?.genre}</span> }
-
       </p>
     </section>
   )

@@ -68,11 +68,6 @@ export default function App() {
     }
   }
 
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    fetchLyricsWith(artist, title);
-  }
-
   function handleLocalMetadata(artist: string, title: string, lyricsText?: string, songDetails?: SongDetailType) {
     setArtist(artist)
     setTitle(title)
@@ -113,57 +108,6 @@ export default function App() {
           <div className="p-2 my-2">
             <LocalAudioPlayer onMetadata={handleLocalMetadata} />
           </div>
-          <section className="my-3 border-b border-gray-400" />
-
-          {/* Lyrics Search Form */}
-          <form
-            onSubmit={handleSubmit}
-          >
-            <label className="block">
-              <span className="after:content-['*'] after:ml-0.5 after:text-red-500 block text-sm font-medium text-white">
-                Song Title
-              </span>
-              <input
-                placeholder="Song title"
-                value={title}
-                onChange={e => setTitle(e.target.value)}
-                className="mt-1 px-3 py-2 border shadow-sm border-slate-300 placeholder-slate-400
-                focus:outline-none focus:border-sky-500 focus:ring-sky-500
-                block w-full rounded-md sm:text-sm focus:ring-1 mb-4"
-              />
-            </label>
-
-            <label className="block">
-              <span className="after:content-['*'] after:ml-0.5 after:text-red-500 block text-sm font-medium text-white">
-                Artist
-              </span>
-              <input
-                placeholder="Artist"
-                value={artist}
-                onChange={e => setArtist(e.target.value)}
-                className="mt-1 px-3 py-2 border shadow-sm border-slate-300 placeholder-slate-400
-                focus:outline-none focus:border-sky-500 focus:ring-sky-500
-                block w-full rounded-md sm:text-sm focus:ring-1 mb-4"
-              />
-            </label>
-
-            <button
-              type="submit"
-              className="w-full rounded-full bg-amber-600 hover:bg-amber-500 disabled:text-gray-400 disabled:cursor-not-allowed"
-              disabled={isFetchingLyrics}>
-              { isFetchingLyrics && "Loading…" }
-              { !isFetchingLyrics && "Fetch lyrics" }
-            </button>
-
-            <div style={{ marginTop: 8, display: 'none' }}>
-              <button type="button" className="rounded-full mx-2" onClick={() => adjust(-250)}>
-                -250ms
-              </button>
-              <button type="button" className="rounded-full mx-2" onClick={() => adjust(250)}>
-                +250ms
-              </button>
-            </div>
-          </form>
 
           <section className="my-9 border-b-2 border-amber-400" />
 
@@ -171,7 +115,7 @@ export default function App() {
           { !isFetchingLyrics && songDetails && (
             <section className="flex flex-col gap-4">
               <SongTranslations song={songDetails} />
-              <SongDetail song={songDetails} />
+              <SongDetail song={songDetails} artist={artist} title={title} />
             </section>
           )}
 
