@@ -1,4 +1,4 @@
-import ThreeDotsLoader from "./ThreeDotsLoader"
+import ThreeDotsLoader from "../animations/ThreeDotsLoader"
 
 export default function Loader({status}: { status: string }): JSX.Element {
   return (
