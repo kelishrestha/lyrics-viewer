@@ -15,8 +15,8 @@ export function LocalAudioPlayer({ onMetadata, setSourceAudio, audioRef }: Props
         const title = tag.tags.title || ""
         const songDetails = {
           album: {
-            name: tag.tags.album,
-            picture: { format: tag.tags.picture?.format, type: tag.tags.picture?.type, data: tag.tags.picture.data },
+            name: tag.tags.album || "",
+            picture: { format: tag.tags.picture?.format, type: tag.tags.picture?.type, data: tag.tags.picture?.data },
             year: tag.tags.year,
             genre: tag.tags.genre
           },

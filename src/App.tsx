@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react"
 import { FloatingLyrics } from "./ui/FloatingLyrics"
 import { LocalAudioPlayer } from "./players/LocalAudioPlayer"
 import { parseLRC, prepareFakeLyrics, type LyricLine } from "./lyrics/lrcParser"
-import { adjust, resetSync, startSync } from "./sync/ManualSync"
+import { resetSync, startSync } from "./sync/ManualSync"
 import Loader from "./ui/Loader"
 import ScrollingContent from "./ui/ScrollingContent"
 import { SongDetail, type SongDetailType } from "./ui/SongDetail"
@@ -10,6 +10,9 @@ import { SongTranslations } from "./ui/SongTranslations"
 import ProgressBar from "./ui/ProgressBar"
 import Volume from "./ui/Volume"
 import { PlayButton } from "./ui/PlayButton"
+import { ArrowClockwise, Soundwave } from "react-bootstrap-icons";
+import Visualizer from "./ui/Visualizer"
+import './styles/Visualizer.css';
 
 type LyricsResponse = {
   source: string | null
@@ -41,9 +44,13 @@ export default function App() {
   const [timeElapsed, setTimeElapsed] = useState(0);
   const [songLength, setSongLength] = useState(0);
   const [songFinished, setSongFinished] = useState(false);
-  const [dragging, setDragging] = useState(false);
+  const [_dragging, setDragging] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
   const [volume, setVolume] = useState(0.7);
+  const [visualizer, setVisualizer] = useState(false);
+  const audioContextRef = useRef<AudioContext | null>(null);
+  const [analyser, setAnalyser] = useState<AnalyserNode | null>(null);
+  const sourceNodeRef = useRef<MediaElementAudioSourceNode | null>(null);
 
   useEffect(() => {
     const audio = sourceAudioRef.current;
@@ -107,6 +114,16 @@ export default function App() {
     if(audio){
       setTimeElapsed(audio.currentTime);
       setSongLength(audio.duration);
+      if (!audioContextRef.current) {
+        const context = new (window.AudioContext || (window as any).webkitAudioContext)();
+        audioContextRef.current = context;
+        const analyserNode = context.createAnalyser();
+        const sourceNode = context.createMediaElementSource(audio);
+        sourceNode.connect(analyserNode);
+        analyserNode.connect(context.destination);
+        setAnalyser(analyserNode);
+        sourceNodeRef.current = sourceNode;
+      }
     }
   };
 
@@ -146,6 +163,7 @@ export default function App() {
       audio.onabort = resetSync
       audio.onended = resetSync
       audio.play();
+      audioContextRef.current?.resume();
     }
 
     setIsPlaying(true);
@@ -200,8 +218,18 @@ export default function App() {
               setIsPlaying(false)
             }}
           ></audio>
-          <div className="flex flex-row justify-between">
+          <div className="flex flex-row justify-between pb-2">
             <PlayButton isPlaying={isPlaying} toggleIsPlaying={handlePlayPause} />
+            <button
+              aria-label="Visualizer"
+              onClick={() => setVisualizer((prev) => !prev)}
+            >
+              <Soundwave className="text-amber-300" size={25} />
+              {visualizer && <div className="dot" />}
+            </button>
+            <button disabled={isFetchingLyrics} onClick={() => fetchLyricsWith(artist, title)}>
+              <ArrowClockwise className="text-amber-300" size={25} />
+            </button>
             <Volume
               value={volume * 100}
               onChange={(e) =>
@@ -209,6 +237,8 @@ export default function App() {
               }
             />
           </div>
+          { visualizer && (<Visualizer analyser={analyser} source={sourceAudioRef} />) }
+
   		    <ProgressBar
             value={progress}
             onChange={(e) => {

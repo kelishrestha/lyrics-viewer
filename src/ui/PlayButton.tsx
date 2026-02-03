@@ -1,4 +1,4 @@
-import { PauseCircleIcon, PlayCircleIcon } from "@heroicons/react/24/solid";
+import { PauseCircle, PlayCircle } from "react-bootstrap-icons";
 
 export function PlayButton({ isPlaying, toggleIsPlaying }: { isPlaying: boolean, toggleIsPlaying: () => void }){
 
@@ -9,10 +9,10 @@ export function PlayButton({ isPlaying, toggleIsPlaying }: { isPlaying: boolean,
       className="cursor-pointer"
     >
       {!isPlaying && (
-        <PlayCircleIcon className="w-8 text-amber-300 disabled:text-gray-500" />
+        <PlayCircle className="text-amber-300 disabled:text-gray-500" size={25}/>
       )}
       {isPlaying && (
-        <PauseCircleIcon className="w-8 text-amber-300 disabled:text-gray-500" />
+        <PauseCircle className="text-amber-300 disabled:text-gray-500" size={25}/>
       )}
     </button>
   )

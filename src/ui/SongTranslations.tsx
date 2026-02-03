@@ -1,7 +1,7 @@
 import type { SongDetailType } from "./SongDetail";
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
-import { ChevronDownIcon } from '@heroicons/react/24/solid'
 import { getLangNameFromCode } from 'language-name-map'
+import { ChevronDown } from "react-bootstrap-icons";
 
 const translationLabel = (lang: string) => {
   if(!lang) return null
@@ -17,7 +17,7 @@ export function SongTranslations({ song }: { song: SongDetailType }): JSX.Elemen
       <MenuButton className="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-blue-800 hover:bg-blue-600
         px-3 py-2 text-sm font-semibold text-white inset-ring-1 inset-ring-white/5">
         See Translations
-        <ChevronDownIcon aria-hidden="true" className="-mr-1 size-5 text-gray-400" />
+        <ChevronDown aria-hidden="true" className="-mr-1 size-5 text-gray-400" />
       </MenuButton>
 
       <MenuItems
