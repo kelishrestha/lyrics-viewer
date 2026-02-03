@@ -1,10 +1,12 @@
 import { useState } from "react"
 import { FloatingLyrics } from "./ui/FloatingLyrics"
 import { LocalAudioPlayer } from "./players/LocalAudioPlayer"
-import { parseLRC, type LyricLine } from "./lyrics/lrcParser"
+import { parseLRC, prepareFakeLyrics, type LyricLine } from "./lyrics/lrcParser"
 import { adjust, resetSync } from "./sync/ManualSync"
-import Loader from "./ui/loader"
+import Loader from "./ui/Loader"
 import ScrollingContent from "./ui/ScrollingContent"
+import { SongDetail, type SongDetailType } from "./ui/SongDetail"
+import { SongTranslations } from "./ui/SongTranslations"
 
 type LyricsResponse = {
   source: string | null
@@ -18,10 +20,12 @@ export default function App() {
   const [title, setTitle] = useState("")
   const [lyrics, setLyrics] = useState<LyricLine[]>([])
   const [rawLyrics, setRawLyrics] = useState<string | null>(null)
-  const [status, setStatus] = useState("Idle")
+  const [status, setStatus] = useState("Please choose song to fetch lyrics from...")
   const [fallbackUrl, setFallbackUrl] = useState<string | null>(null)
   const [isFetchingLyrics, setIsFetchingLyrics] = useState(false);
   const [isIframeLoading, setIsIframeLoading] = useState(false)
+  const [songDetails, setSongDetails] = useState<SongDetailType | null>(null);
+  const [source, setSource] = useState<string | null>(null);
 
   async function fetchLyricsWith(artistName: string, titleName: string) {
     if (!artistName || !titleName) return
@@ -39,28 +43,21 @@ export default function App() {
 
     const data: LyricsResponse = await res.json()
 
+    setSource(data.source)
+    setRawLyrics(data.lyrics)
+
     if (data.lyrics) {
       // convert plain text → fake LRC (2s per line)
-      const fakeLrc = data.lyrics
-        .split("\n")
-        .filter(l => l.trim().length > 0)
-        .map((line, i) => {
-          const totalSec = i * 2
-          const m = Math.floor(totalSec / 60)
-          const s = totalSec % 60
-          return `[${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}\.00]${line}`
-        })
-        .join("\n")
+      const fakeLrc = prepareFakeLyrics(data.lyrics)
 
       setLyrics(parseLRC(fakeLrc))
-      setRawLyrics(data.lyrics)
-      console.log(lyrics, 50);
       setStatus(`Lyrics loaded (${data.source})`)
       setIsFetchingLyrics(false)
     } else if (data.url) {
       // fallback: show Genius page via backend proxy to bypass X-Frame-Options
       setLyrics([])
       setStatus('Lyrics available on Genius')
+      setSongDetails(data.song_details);
       setIsIframeLoading(true)
       setFallbackUrl(`http://localhost:4000/proxy?url=${encodeURIComponent(data.url)}`)
       setIsFetchingLyrics(false)
@@ -76,11 +73,32 @@ export default function App() {
     fetchLyricsWith(artist, title);
   }
 
-  function handleLocalMetadata(artist: string, title: string) {
+  function handleLocalMetadata(artist: string, title: string, lyricsText?: string, songDetails?: SongDetailType) {
     setArtist(artist)
     setTitle(title)
-    // auto-fetch lyrics
-    fetchLyricsWith(artist, title);
+
+    if(songDetails) { setSongDetails(songDetails) }
+
+    if (lyricsText) {
+      setStatus("Lyrics loaded from file")
+      setIsFetchingLyrics(false)
+      setFallbackUrl(null)
+      setRawLyrics(lyricsText)
+
+      // Simple check for LRC format
+      const isLRC = /\[\d{2}:\d{2}\.\d{2,3}\]/.test(lyricsText);
+
+      if (isLRC) {
+        setLyrics(parseLRC(lyricsText))
+      } else {
+        // Not LRC, so create fake timestamps (2s per line)
+        const fakeLrc = prepareFakeLyrics(lyricsText)
+        setLyrics(parseLRC(fakeLrc))
+      }
+    } else {
+      // auto-fetch lyrics if not found in file
+      fetchLyricsWith(artist, title);
+    }
   }
 
   const handleIframeLoad = () => {
@@ -95,6 +113,8 @@ export default function App() {
           <div className="p-2 my-2">
             <LocalAudioPlayer onMetadata={handleLocalMetadata} />
           </div>
+          <section className="my-3 border-b border-gray-400" />
+
           {/* Lyrics Search Form */}
           <form
             onSubmit={handleSubmit}
@@ -127,8 +147,12 @@ export default function App() {
               />
             </label>
 
-            <button type="submit" className="w-full rounded-full">
-              Fetch Lyrics
+            <button
+              type="submit"
+              className="w-full rounded-full bg-amber-600 hover:bg-amber-500 disabled:text-gray-400 disabled:cursor-not-allowed"
+              disabled={isFetchingLyrics}>
+              { isFetchingLyrics && "Loading…" }
+              { !isFetchingLyrics && "Fetch lyrics" }
             </button>
 
             <div style={{ marginTop: 8, display: 'none' }}>
@@ -140,6 +164,17 @@ export default function App() {
               </button>
             </div>
           </form>
+
+          <section className="my-9 border-b-2 border-amber-400" />
+
+          {/* Song Details */}
+          { !isFetchingLyrics && songDetails && (
+            <section className="flex flex-col gap-4">
+              <SongTranslations song={songDetails} />
+              <SongDetail song={songDetails} />
+            </section>
+          )}
+
         </section>
         {/* Search form ends */}
 

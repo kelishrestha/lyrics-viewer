@@ -3,7 +3,7 @@ import { startSync, resetSync } from "../sync/ManualSync"
 import { useRef } from 'react';
 
 type Props = {
-  onMetadata: (artist: string, title: string) => void
+  onMetadata: (artist: string, title: string, lyrics?: string, songDetails?: any) => void
 }
 
 export function LocalAudioPlayer({ onMetadata }: Props) {
@@ -14,9 +14,27 @@ export function LocalAudioPlayer({ onMetadata }: Props) {
       onSuccess: tag => {
         const artist = tag.tags.artist || ""
         const title = tag.tags.title || ""
+        const songDetails = {
+          album: {
+            name: tag.tags.album,
+            picture: { format: tag.tags.picture?.format, type: tag.tags.picture?.type, data: tag.tags.picture.data },
+            year: tag.tags.year,
+            genre: tag.tags.genre
+          },
+        }
+        let lyrics: string | undefined;
+        const lyricsTag = tag.tags.lyrics;
+        if (lyricsTag) {
+          if (typeof lyricsTag === 'string') {
+            lyrics = lyricsTag;
+          } else if (lyricsTag.lyrics && typeof lyricsTag.lyrics === 'string') {
+            // For USLT/SYLT tag objects
+            lyrics = lyricsTag.lyrics;
+          }
+        }
 
         if (artist && title) {
-          onMetadata(artist, title)
+          onMetadata(artist, title, lyrics, songDetails)
         }
       },
       onError: err => {
@@ -27,7 +45,8 @@ export function LocalAudioPlayer({ onMetadata }: Props) {
     // Play audio
     const audio = new Audio(URL.createObjectURL(file))
     audio.onplay = startSync
-    audio.onpause = resetSync
+    audio.onabort = resetSync
+    audio.onended = resetSync
     audioRef.current = audio
     audio.play()
   }

@@ -53,3 +53,15 @@ export function splitLyrics(text: string): string[][] {
     )
     .filter(p => p.length > 0)
 }
+
+export function prepareFakeLyrics(lyricsText: string): string {
+  return lyricsText.split("\n")
+    .filter(l => l.trim().length > 0)
+    .map((line, i) => {
+      const totalSec = i * 2
+      const m = Math.floor(totalSec / 60)
+      const s = totalSec % 60
+      return `[${String(m).padStart(2, "0")}:${String(s).padStart(2, "0")}\.00]${line}`
+    })
+    .join("\n")
+}
