@@ -39,7 +39,6 @@ export function SongDetail({ song, artist, title }: { song: SongDetailType, arti
   if(!song) return null
 
   const releaseDate = song.album?.release_date_for_display || song.album?.year;
-
   const coverUrl = imageFromBytes(song.album?.picture?.data, song.album?.picture?.format)
   const albumCoverImage = song.album?.cover_art_url || coverUrl
 

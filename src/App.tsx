@@ -1,12 +1,15 @@
-import { useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { FloatingLyrics } from "./ui/FloatingLyrics"
 import { LocalAudioPlayer } from "./players/LocalAudioPlayer"
 import { parseLRC, prepareFakeLyrics, type LyricLine } from "./lyrics/lrcParser"
-import { adjust, resetSync } from "./sync/ManualSync"
+import { adjust, resetSync, startSync } from "./sync/ManualSync"
 import Loader from "./ui/Loader"
 import ScrollingContent from "./ui/ScrollingContent"
 import { SongDetail, type SongDetailType } from "./ui/SongDetail"
 import { SongTranslations } from "./ui/SongTranslations"
+import ProgressBar from "./ui/ProgressBar"
+import Volume from "./ui/Volume"
+import { PlayButton } from "./ui/PlayButton"
 
 type LyricsResponse = {
   source: string | null
@@ -14,6 +17,12 @@ type LyricsResponse = {
   url?: string
   song_details?: any
 }
+
+const formatTime = (time: any) => {
+  const minutes = Math.floor(time / 60);
+  const seconds = Math.floor(time - minutes * 60);
+  return `${minutes}:${seconds < 10 ? "0" + seconds : seconds}`;
+};
 
 export default function App() {
   const [artist, setArtist] = useState("")
@@ -25,7 +34,23 @@ export default function App() {
   const [isFetchingLyrics, setIsFetchingLyrics] = useState(false);
   const [isIframeLoading, setIsIframeLoading] = useState(false)
   const [songDetails, setSongDetails] = useState<SongDetailType | null>(null);
-  const [source, setSource] = useState<string | null>(null);
+  // Audio player
+  const [sourceAudioUrl, setSourceAudioUrl] = useState<any | null>(null);
+  const sourceAudioRef = useRef<HTMLAudioElement | null>(null);
+  const [progress, setProgress] = useState(0);
+  const [timeElapsed, setTimeElapsed] = useState(0);
+  const [songLength, setSongLength] = useState(0);
+  const [songFinished, setSongFinished] = useState(false);
+  const [dragging, setDragging] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [volume, setVolume] = useState(0.7);
+
+  useEffect(() => {
+    const audio = sourceAudioRef.current;
+    if(audio) {
+      audio.volume = volume;
+    }
+  }, [volume])
 
   async function fetchLyricsWith(artistName: string, titleName: string) {
     if (!artistName || !titleName) return
@@ -43,7 +68,6 @@ export default function App() {
 
     const data: LyricsResponse = await res.json()
 
-    setSource(data.source)
     setRawLyrics(data.lyrics)
 
     if (data.lyrics) {
@@ -68,10 +92,63 @@ export default function App() {
     }
   }
 
+  const setTimeUpdate = () => {
+    const audio = sourceAudioRef.current
+    if (audio) {
+      const currentTime = audio.currentTime;
+      const progress = currentTime ? Number(((currentTime*100)/audio.duration).toFixed(1)) : 0;
+      setTimeElapsed(currentTime);
+      setProgress(progress)
+    }
+  }
+
+  const setLoadedData = async () => {
+    const audio = sourceAudioRef.current;
+    if(audio){
+      setTimeElapsed(audio.currentTime);
+      setSongLength(audio.duration);
+    }
+  };
+
+  const updateCurrentTime = (value: any) => {
+		const audio = sourceAudioRef.current;
+    if(audio){
+      const currentTime = (audio.duration * value) / 100;
+      audio.currentTime = currentTime;
+    }
+	};
+
+  const progressSeekEnd = (e) => {
+		updateCurrentTime(e.target.value);
+    if(songFinished){ setProgress(0) }
+		setDragging(false);
+	};
+
+  const handlePlayPause = () => {
+    const audio = sourceAudioRef.current;
+    if(audio){
+      setIsPlaying(!isPlaying);
+      if(isPlaying){
+        audio.pause();
+      } else {
+        audio.play();
+      }
+    }
+  }
+
   function handleLocalMetadata(artist: string, title: string, lyricsText?: string, songDetails?: SongDetailType) {
     setArtist(artist)
     setTitle(title)
 
+    const audio = sourceAudioRef.current;
+    if(audio){
+      audio.onplay = startSync
+      audio.onabort = resetSync
+      audio.onended = resetSync
+      audio.play();
+    }
+
+    setIsPlaying(true);
     if(songDetails) { setSongDetails(songDetails) }
 
     if (lyricsText) {
@@ -106,8 +183,42 @@ export default function App() {
         <section key="lyrics-search" className="bg-zinc-800 p-3">
           {/* Playback Sources */}
           <div className="p-2 my-2">
-            <LocalAudioPlayer onMetadata={handleLocalMetadata} />
+            <LocalAudioPlayer
+              onMetadata={handleLocalMetadata}
+              setSourceAudio={setSourceAudioUrl}
+              audioRef={sourceAudioRef} />
           </div>
+          {/* Audio Player */}
+          <audio
+            src={sourceAudioUrl}
+            ref={sourceAudioRef}
+            onTimeUpdate={setTimeUpdate}
+            onLoadedData={setLoadedData}
+            crossOrigin="anonymous"
+            onEnded={() => {
+              setSongFinished(true)
+              setIsPlaying(false)
+            }}
+          ></audio>
+          <div className="flex flex-row justify-between">
+            <PlayButton isPlaying={isPlaying} toggleIsPlaying={handlePlayPause} />
+            <Volume
+              value={volume * 100}
+              onChange={(e) =>
+                setVolume(Number(e.target.value) / 100)
+              }
+            />
+          </div>
+  		    <ProgressBar
+            value={progress}
+            onChange={(e) => {
+              setProgress(Number(e.target.value));
+            }}
+            progressSeekStart={() => setDragging(true)}
+            progressSeekEnd={progressSeekEnd}
+            timeElapsed={formatTime(timeElapsed)}
+            songLength={formatTime(songLength)}
+          />
 
           <section className="my-9 border-b-2 border-amber-400" />
 
@@ -118,7 +229,6 @@ export default function App() {
               <SongDetail song={songDetails} artist={artist} title={title} />
             </section>
           )}
-
         </section>
         {/* Search form ends */}
 

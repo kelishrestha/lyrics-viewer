@@ -1,13 +1,12 @@
 import jsmediatags from 'jsmediatags/dist/jsmediatags.min.js';
-import { startSync, resetSync } from "../sync/ManualSync"
-import { useRef } from 'react';
 
 type Props = {
-  onMetadata: (artist: string, title: string, lyrics?: string, songDetails?: any) => void
+  onMetadata: (artist: string, title: string, lyrics?: string, songDetails?: any) => void,
+  setSourceAudio: (audio: any) => void,
+  audioRef: any
 }
 
-export function LocalAudioPlayer({ onMetadata }: Props) {
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+export function LocalAudioPlayer({ onMetadata, setSourceAudio, audioRef }: Props) {
   async function handleFile(file: File) {
     // Read metadata
     jsmediatags.read(file, {
@@ -42,13 +41,8 @@ export function LocalAudioPlayer({ onMetadata }: Props) {
       },
     })
 
-    // Play audio
-    const audio = new Audio(URL.createObjectURL(file))
-    audio.onplay = startSync
-    audio.onabort = resetSync
-    audio.onended = resetSync
-    audioRef.current = audio
-    audio.play()
+    // set source audio
+    setSourceAudio(URL.createObjectURL(file))
   }
 
   return (
