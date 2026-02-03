@@ -1,6 +1,13 @@
 import type { SongDetailType } from "./SongDetail";
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { ChevronDownIcon } from '@heroicons/react/24/solid'
+import { getLangNameFromCode } from 'language-name-map'
+
+const translationLabel = (lang: string) => {
+  if(!lang) return null
+
+  return getLangNameFromCode(lang)?.name || lang
+}
 
 export function SongTranslations({ song }: { song: SongDetailType }): JSX.Element {
   if (!song.translation_songs) return null
@@ -32,7 +39,7 @@ export function SongTranslations({ song }: { song: SongDetailType }): JSX.Elemen
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  {translation.language} - {translation.title}
+                  { translationLabel(translation.language) }
                 </a>
               </MenuItem>
             ))
