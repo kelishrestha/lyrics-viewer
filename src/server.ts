@@ -4,6 +4,8 @@ import { cors } from 'hono/cors'
 // import dotenv from 'dotenv'
 import { searchGenius } from './providers/genius.js'
 import { searchLyricsOVH } from './providers/lyricsOvh.js'
+import { searchLrcLib } from './providers/lrclib.js'
+import { error } from 'console'
 
 // dotenv.config()
 
@@ -23,6 +25,38 @@ app.use('*', cors({
   credentials: false,
 }))
 
+app.get('/synced_lyrics', async c => {
+  const artist = c.req.query('artist')
+  const title = c.req.query('title');
+
+  console.log("❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯")
+  console.log(`Searching for synced lyrics: ${title} by ${artist}`)
+
+  if(!title) {
+    return c.json({ error: 'Missing title' }, 400)
+  }
+  if(!artist) {
+    return c.json({ error: 'Missing artist' }, 400)
+  }
+
+  try {
+    const lyricsNet = await searchLrcLib(artist, title)
+    if(lyricsNet){
+      // Lyrics.net
+      return c.json({ source: 'lrclib',
+                      lyrics: lyricsNet.syncedLyrics,
+                      raw_lyrics: lyricsNet.plainLyrics,
+                      url: null })
+    } else {
+      return c.json({
+        error: 'Lyrics not found'
+      }, 404)
+    }
+  } catch(e) {
+    return c.json({ error: `Internal server error: ${e}` }, 500)
+  }
+})
+
 app.get('/lyrics', async c => {
   const artist = c.req.query('artist')
   const title = c.req.query('title')
@@ -34,20 +68,22 @@ app.get('/lyrics', async c => {
   }
 
   try {
-    const lyrics = await searchLyricsOVH(artist, title)
-    if(lyrics){
+    const lyricsOvh = await searchLyricsOVH(artist, title)
+    if(lyricsOvh){
       console.log('✅ Lyrics found in lyrics.ovh')
-      return c.json({ source: 'lyrics.ovh', lyrics })
+      return c.json({ source: 'lyrics.ovh', raw_lyrics: lyricsOvh, lyrics: null, url: null })
     } else {
       // Genius
-      console.log('⚠️ No lyrics found in lyrics.ovh; Searching in Genius....')
+      console.log("( •_ •) ▬▬ι═══════ﺤ")
+      console.log('⚠️ No lyrics found in lyrics.ovh and lrclib.net; Searching in Genius....')
       const genius = await searchGenius(artist, title)
       if (genius) {
         console.log('✅ Lyrics found in Genius')
-        return c.json({ source: 'genius', lyrics: null, url: genius.url, song_details: genius.songDetails })
+        return c.json({ source: 'genius', lyrics: null, raw_lyrics: null, url: genius.url, song_details: genius.songDetails })
       } else {
+        console.log("( •_ •) ▬▬ι═══════ﺤ")
         console.log('⚠️ No lyrics found in Genius')
-        return c.json({ source: null, lyrics: null, url: null })
+        return c.json({ source: null, lyrics: null, raw_lyrics: null, url: null })
       }
     }
   } catch (e) {
@@ -85,3 +121,5 @@ app.get('/proxy', async c => {
 const port = Number(process.env.PORT) || 4000
 serve({ fetch: app.fetch, port })
 console.log(`🔥 Lyrics wrapper API running at http://localhost:${port}`)
+console.log("⊹ ࣪ ﹏𓊝﹏𓂁﹏⊹ ࣪ ˖")
+console.log("‧₊˚♪ 𝄞₊˚⊹")

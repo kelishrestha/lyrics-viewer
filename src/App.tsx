@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react"
 import { FloatingLyrics } from "./ui/FloatingLyrics"
-import { LocalAudioPlayer } from "./players/LocalAudioPlayer"
+import { LocalAudioLoader } from "./players/LocalAudioLoader"
 import { parseLRC, prepareFakeLyrics, type LyricLine } from "./lyrics/lrcParser"
 import { resetSync, startSync } from "./sync/ManualSync"
 import Loader from "./ui/Loader"
@@ -17,6 +17,7 @@ import './styles/Visualizer.css';
 type LyricsResponse = {
   source: string | null
   lyrics: string | null
+  raw_lyrics: string | null
   url?: string
   song_details?: any
 }
@@ -59,15 +60,47 @@ export default function App() {
     }
   }, [volume])
 
-  async function fetchLyricsWith(artistName: string, titleName: string) {
-    if (!artistName || !titleName) return
-
+  const resetAll = () => {
     resetSync()
     setStatus("Fetching lyrics…")
     setIsFetchingLyrics(true)
     setFallbackUrl(null)
     setLyrics([])
     setRawLyrics(null)
+  }
+
+  async function fetchSyncedLyrics(artistName: string, titleName: string) {
+    if (!artistName || !titleName) return
+
+    resetAll()
+
+    const res = await fetch(
+      `http://localhost:4000/synced_lyrics?artist=${encodeURIComponent(artistName)}&title=${encodeURIComponent(titleName)}`
+    )
+
+    const data: LyricsResponse = await res.json()
+
+    if(res.status !== 200){
+      fetchLyricsWith(artistName, titleName)
+      return
+    }
+    // Set plain lyrics
+    setRawLyrics(data.raw_lyrics)
+
+    if(data.lyrics){
+      setLyrics(parseLRC(data.lyrics))
+      setStatus(`Lyrics loaded from (${data.source})`)
+      setIsFetchingLyrics(false)
+    } else {
+      fetchLyricsWith(artistName, titleName)
+    }
+  }
+
+
+  async function fetchLyricsWith(artistName: string, titleName: string) {
+    if (!artistName || !titleName) return
+
+    resetAll()
 
     const res = await fetch(
       `http://localhost:4000/lyrics?artist=${encodeURIComponent(artistName)}&title=${encodeURIComponent(titleName)}`
@@ -75,11 +108,11 @@ export default function App() {
 
     const data: LyricsResponse = await res.json()
 
-    setRawLyrics(data.lyrics)
+    setRawLyrics(data.raw_lyrics)
 
-    if (data.lyrics) {
+    if (data.raw_lyrics) {
       // convert plain text → fake LRC (2s per line)
-      const fakeLrc = prepareFakeLyrics(data.lyrics)
+      const fakeLrc = prepareFakeLyrics(data.raw_lyrics)
 
       setLyrics(parseLRC(fakeLrc))
       setStatus(`Lyrics loaded (${data.source})`)
@@ -182,12 +215,16 @@ export default function App() {
         setLyrics(parseLRC(lyricsText))
       } else {
         // Not LRC, so create fake timestamps (2s per line)
-        const fakeLrc = prepareFakeLyrics(lyricsText)
-        setLyrics(parseLRC(fakeLrc))
+        fetchSyncedLyrics(artist, title);
+
+        if(!lyrics){
+          const fakeLrc = prepareFakeLyrics(lyricsText)
+          setLyrics(parseLRC(fakeLrc))
+        }
       }
     } else {
       // auto-fetch lyrics if not found in file
-      fetchLyricsWith(artist, title);
+      fetchSyncedLyrics(artist, title);
     }
   }
 
@@ -201,7 +238,7 @@ export default function App() {
         <section key="lyrics-search" className="bg-zinc-800 p-3">
           {/* Playback Sources */}
           <div className="p-2 my-2">
-            <LocalAudioPlayer
+            <LocalAudioLoader
               onMetadata={handleLocalMetadata}
               setSourceAudio={setSourceAudioUrl}
               audioRef={sourceAudioRef} />
@@ -227,7 +264,7 @@ export default function App() {
               <Soundwave className="text-amber-300" size={25} />
               {visualizer && <div className="dot" />}
             </button>
-            <button disabled={isFetchingLyrics} onClick={() => fetchLyricsWith(artist, title)}>
+            <button disabled={isFetchingLyrics} onClick={() => fetchSyncedLyrics(artist, title)}>
               <ArrowClockwise className="text-amber-300" size={25} />
             </button>
             <Volume

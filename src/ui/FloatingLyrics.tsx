@@ -26,7 +26,6 @@ export function FloatingLyrics({ lyrics }: { lyrics: LyricLine[] }) {
   }, [lyrics])
 
   return (
-    current &&
     <div className="text-center relative justify-center items-center flex
                     text-4xl pointer-events-none text-shadow-2xs">
       <div className="h-1/3 bg-gray-800 justify-center items-center flex px-10 rounded-2xl w-xl">

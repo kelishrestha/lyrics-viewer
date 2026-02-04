@@ -1,4 +1,5 @@
 import jsmediatags from 'jsmediatags/dist/jsmediatags.min.js';
+import { isLyricsSynced } from '../lyrics/lrcParser';
 
 type Props = {
   onMetadata: (artist: string, title: string, lyrics?: string, songDetails?: any) => void,
@@ -6,7 +7,7 @@ type Props = {
   audioRef: any
 }
 
-export function LocalAudioPlayer({ onMetadata, setSourceAudio, audioRef }: Props) {
+export function LocalAudioLoader({ onMetadata, setSourceAudio, audioRef }: Props) {
   async function handleFile(file: File) {
     // Read metadata
     jsmediatags.read(file, {

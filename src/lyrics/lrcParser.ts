@@ -25,6 +25,11 @@ export type LyricLine = {
   text: string
 }
 
+export function isLyricsSynced(lrc: string): boolean {
+  const match = lrc.split('\n')[0].match(/\[(\d+):(\d+\.\d+)\]/)
+  return !!match
+}
+
 export function parseLRC(lrc: string): LyricLine[] {
   return lrc
     .split("\n")
