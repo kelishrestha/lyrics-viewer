@@ -201,7 +201,7 @@ export default function App() {
           <section className="flex flex-col gap-4">
             <SongTranslations song={songResponse?.song_details || songDetails} />
             <SongDetail song={songResponse?.song_details || songDetails} artist={artist} title={title} />
-            <p className="text-xs italic justify-center items-center flex">Lyrics Source: {songResponse?.source}</p>
+            <p className="text-sm italic justify-center items-center flex">Lyrics Source: {songResponse?.source}</p>
           </section>
         )}
       </section>

@@ -2,6 +2,9 @@ import './index.css'
 
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
+import '@fontsource/bai-jamjuree';
+import '@fontsource-variable/dm-sans';
+import '@fontsource-variable/dm-sans/standard-italic.css';
 
 import App from './App.tsx'
 

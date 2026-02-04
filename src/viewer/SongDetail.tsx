@@ -25,7 +25,7 @@ export function SongDetail({ song, artist, title }: { song: SongDetailType, arti
       <p className="flex flex-col my-2 gap-1 text-center">
         <span className="font-bold text-2xl">{title}</span>
         <span className="font-bold text-gray-300">{artist}</span>
-        <span className="text-xs text-gray-300 mt-2">Album</span>
+        <span className="text-sm text-gray-300 mt-2">Album</span>
         <span className="font-bold text-gray-300">{song.album?.name}</span>
       </p>
       <p className="flex flex-col text-gray-300 gap-1 text-center">

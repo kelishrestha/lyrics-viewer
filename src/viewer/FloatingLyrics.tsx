@@ -5,7 +5,7 @@ import type { LyricLineType } from "../lyrics/types";
 
 export function FloatingLyrics({ lyrics, audioRef }: { lyrics: LyricLineType[], audioRef: RefObject<HTMLAudioElement | null> }) {
   const [current, setCurrent] = useState<LyricLineType | null>(null)
-  console.log(lyrics, 8);
+
   useEffect(() => {
     let raf: number
 
