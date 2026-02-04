@@ -1,36 +1,11 @@
-// export interface Word {
-//   time: number
-//   text: string
-// }
-
-// export function parseLRC(lrc: string): Word[] {
-//   const regex = /<(\d+:\d+\.\d+)>([^<]+)/g
-//   const words: Word[] = []
-
-//   const toMs = (t: string) => {
-//     const [m, s] = t.split(":")
-//     return Number(m) * 60000 + Number(s) * 1000
-//   }
-
-//   let match
-//   while ((match = regex.exec(lrc))) {
-//     words.push({ time: toMs(match[1]), text: match[2].trim() })
-//   }
-
-//   return words
-// }
-
-export type LyricLine = {
-  time: number
-  text: string
-}
+import type { LyricLineType } from "./types"
 
 export function isLyricsSynced(lrc: string): boolean {
   const match = lrc.split('\n')[0].match(/\[(\d+):(\d+\.\d+)\]/)
   return !!match
 }
 
-export function parseLRC(lrc: string): LyricLine[] {
+export function parseLRC(lrc: string): LyricLineType[] {
   return lrc
     .split("\n")
     .map(line => {
@@ -43,7 +18,7 @@ export function parseLRC(lrc: string): LyricLine[] {
         text: match[3].trim(),
       }
     })
-    .filter(Boolean) as LyricLine[]
+    .filter(Boolean) as LyricLineType[]
 }
 
 export function splitLyrics(text: string): string[][] {
@@ -70,3 +45,9 @@ export function prepareFakeLyrics(lyricsText: string): string {
     })
     .join("\n")
 }
+
+export const formatTime = (time: any) => {
+  const minutes = Math.floor(time / 60);
+  const seconds = Math.floor(time - minutes * 60);
+  return `${minutes}:${seconds < 10 ? "0" + seconds : seconds}`;
+};

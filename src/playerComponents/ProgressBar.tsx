@@ -7,6 +7,7 @@ const ProgressBar = ({
   progressSeekEnd,
   timeElapsed,
   songLength,
+  isDisabled
 }: {
   value: number;
   onChange: (e: any) => void;
@@ -14,6 +15,7 @@ const ProgressBar = ({
   progressSeekEnd: (e: any) => void;
   timeElapsed: string;
   songLength: string;
+  isDisabled: boolean;
 }) => {
   return (
     <div className="progress">
@@ -34,6 +36,7 @@ const ProgressBar = ({
         onMouseDown={progressSeekStart}
         onTouchEnd={progressSeekEnd}
         onClick={progressSeekEnd}
+        disabled={isDisabled}
       />
       <div className="progress__time">
         <span className="progress__timeElapsed">{timeElapsed}</span>

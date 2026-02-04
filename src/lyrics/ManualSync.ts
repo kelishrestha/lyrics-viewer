@@ -21,4 +21,6 @@ export function getTime() {
 export function resetSync() {
   startTime = 0
   offset = 0
+  console.log('◼ Stopping sync...')
+
 }

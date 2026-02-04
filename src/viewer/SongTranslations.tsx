@@ -1,7 +1,7 @@
-import type { SongDetailType } from "./SongDetail";
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { getLangNameFromCode } from 'language-name-map'
 import { ChevronDown } from "react-bootstrap-icons";
+import type { SongDetailType } from './types';
 
 const translationLabel = (lang: string) => {
   if(!lang) return null

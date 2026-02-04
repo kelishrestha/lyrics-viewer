@@ -2,6 +2,7 @@ import dotenv from 'dotenv'
 import {
   buildQuery,
   fetchJSON,
+  hasSpecialCharacters,
   normalizeText,
   normalizeWithoutNormalChars,
   normalizeWithoutSpecialChars,
@@ -26,6 +27,7 @@ type GeniusSongResponse = {
       url: string,
       title: string,
       primary_artist: { id: number, name: string },
+      id: number | string,
       album: any,
       media: any,
       translation_songs: any
@@ -66,6 +68,7 @@ async function getArtistInfo(artistID: number) {
 
 function compileDetailsAndTranslations(song: GeniusSongResponse['response']['song']) {
   return {
+    id: song.id,
     album: song.album,
     media: song.media,
     translation_songs: song.translation_songs
@@ -75,13 +78,18 @@ function compileDetailsAndTranslations(song: GeniusSongResponse['response']['son
 export async function searchGenius(artist: string, title: string) {
   if(!title) return
 
-  const q = `${normalizeWithoutSpecialChars(title)} ${normalizeWithoutSpecialChars(artist)}`.trim();
+  let query;
+  if(hasSpecialCharacters(title)){
+    query = buildQuery(artist, title)
+  } else {
+    query = `${normalizeWithoutSpecialChars(title)} ${normalizeWithoutSpecialChars(artist)}`.trim();
+  }
 
-  console.log(`🔎 Searching in Genius: ${q}`)
+  console.log(`🔎 Searching in Genius: ${query}`)
 
   // Search with short timeout to avoid hanging UI
   const search = await fetchJSON<GeniusSearchResponse>(
-    `${GENIUS_BASE}/search?q=${encodeURIComponent(q)}`,
+    `${GENIUS_BASE}/search?q=${encodeURIComponent(query)}`,
     'Genius API',
     headers,
     undefined,
@@ -147,6 +155,7 @@ export async function searchGenius(artist: string, title: string) {
   if (!song) return null
 
   console.log(`✅ Song found: ${song.title} by ${song.primary_artist.name}`);
+  console.log('✩♬ ₊˚.🎧⋆☾⋆⁺₊✧✩♬ ₊˚.🎧⋆☾⋆⁺₊✧✩♬ ₊˚.🎧⋆☾⋆⁺₊✧✩♬ ₊˚.🎧⋆☾⋆⁺₊✧✩♬ ₊˚')
 
   const [artistInfo] = await Promise.all([
     getArtistInfo(song.primary_artist.id),

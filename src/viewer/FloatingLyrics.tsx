@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react"
-import { getTime } from "../sync/ManualSync"
-import type { LyricLine } from "../lyrics/lrcParser"
+import { getTime } from "../lyrics/ManualSync"
+import type { LyricLineType } from "../lyrics/lrcParser"
 import { RotateLyricsLine } from "../animations/RotateLyricsLine";
 
-export function FloatingLyrics({ lyrics }: { lyrics: LyricLine[] }) {
-  const [current, setCurrent] = useState<LyricLine | null>(null)
+export function FloatingLyrics({ lyrics }: { lyrics: LyricLineType[] }) {
+  const [current, setCurrent] = useState<LyricLineType | null>(null)
 
   useEffect(() => {
     let raf: number

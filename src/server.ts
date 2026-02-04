@@ -1,13 +1,9 @@
 import { Hono } from 'hono'
 import { serve } from '@hono/node-server'
 import { cors } from 'hono/cors'
-// import dotenv from 'dotenv'
 import { searchGenius } from './providers/genius.js'
 import { searchLyricsOVH } from './providers/lyricsOvh.js'
 import { searchLrcLib } from './providers/lrclib.js'
-import { error } from 'console'
-
-// dotenv.config()
 
 const app = new Hono()
 
@@ -29,7 +25,7 @@ app.get('/synced_lyrics', async c => {
   const artist = c.req.query('artist')
   const title = c.req.query('title');
 
-  console.log("❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯")
+  console.log("❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯ START ❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯")
   console.log(`Searching for synced lyrics: ${title} by ${artist}`)
 
   if(!title) {
@@ -71,11 +67,13 @@ app.get('/lyrics', async c => {
     const lyricsOvh = await searchLyricsOVH(artist, title)
     if(lyricsOvh){
       console.log('✅ Lyrics found in lyrics.ovh')
+      console.log('✩♬ ₊˚.🎧⋆☾⋆⁺₊✧✩♬ ₊˚.🎧⋆☾⋆⁺₊✧✩♬ END ₊˚.🎧⋆☾⋆⁺₊✧✩♬ ₊˚.🎧⋆☾⋆⁺₊✧✩♬ ₊˚')
       return c.json({ source: 'lyrics.ovh', raw_lyrics: lyricsOvh, lyrics: null, url: null })
     } else {
       // Genius
       console.log("( •_ •) ▬▬ι═══════ﺤ")
       console.log('⚠️ No lyrics found in lyrics.ovh and lrclib.net; Searching in Genius....')
+      console.log('────────────────────────────────────────────────────────────────────────────────')
       const genius = await searchGenius(artist, title)
       if (genius) {
         console.log('✅ Lyrics found in Genius')
@@ -83,12 +81,38 @@ app.get('/lyrics', async c => {
       } else {
         console.log("( •_ •) ▬▬ι═══════ﺤ")
         console.log('⚠️ No lyrics found in Genius')
+        console.log('────────────────────────────────────────────────────────────────────────────────')
         return c.json({ source: null, lyrics: null, raw_lyrics: null, url: null })
       }
     }
   } catch (e) {
     console.error(e)
-    return c.json({ error: 'Internal server error' }, 500)
+    return c.json({ error: `Internal server error: ${e}` }, 500)
+  }
+})
+
+app.get('/translations', async c => {
+  const artist = c.req.query('artist')
+  const title = c.req.query('title')
+
+  console.log("❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯ START ❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯❯")
+  console.log(`🔎 Searching for translations: ${title} by ${artist}`)
+
+  if(!artist || !title) {
+    return c.json({ error: 'Missing artist or title' }, 400)
+  }
+
+  try {
+    const song = await searchGenius(artist, title)
+    if (song && song.songDetails.translation_songs.length > 0) {
+      console.log('✅ Translations found')
+      console.log('✩♬ ₊˚.🎧⋆☾⋆⁺₊✧✩♬ ₊˚.🎧⋆☾⋆⁺₊✧✩♬ END ₊˚.🎧⋆☾⋆⁺₊✧✩♬ ₊˚.🎧⋆☾⋆⁺₊✧✩♬ ₊˚')
+      return c.json({ translations: song.songDetails.translation_songs })
+    } else {
+      return c.json({ error: 'No translations found' }, 404)
+    }
+  } catch (err) {
+    return c.json({ error: `Internal server error: ${err}` }, 500)
   }
 })
 

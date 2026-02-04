@@ -24,6 +24,7 @@ export async function searchLrcLib(artist: string, title: string) {
     )
     if(data.length == 0) return null
     console.log(`✅ Song found in lrclib.net: ${data[0].name} by ${data[0].artistName}`);
+    console.log('✩♬ ₊˚.🎧⋆☾⋆⁺₊✧✩♬ ₊˚.🎧⋆☾⋆⁺₊✧✩♬ ₊˚.🎧⋆☾⋆⁺₊✧✩♬ ₊˚.🎧⋆☾⋆⁺₊✧✩♬ ₊˚')
 
     return {
       id: data[0].id,

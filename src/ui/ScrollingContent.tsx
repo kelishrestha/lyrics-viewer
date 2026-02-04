@@ -28,7 +28,6 @@ export default function ScrollingContent({ lyrics } : { lyrics: string }) {
   )
 }
 
-
 function LyricsView({ lyrics }: { lyrics: string[][] }) {
   return (
     <div className="space-y-6 text-center text-lg leading-relaxed text-white m-9">

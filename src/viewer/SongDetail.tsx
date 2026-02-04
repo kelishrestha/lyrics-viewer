@@ -1,29 +1,4 @@
-type TranslationSongs = {
-  language: string,
-  title: string,
-  url: string
-  api_path: string
-}
-type SongMedia = {
-  provider: string,
-  url: string,
-  type: string,
-  attribution: string
-}
-
-export type SongDetailType = {
-  album: {
-    cover_art_url?: string
-    name: string
-    release_date_for_display?: string
-    url?: string,
-    picture?: { format: string, type: string, data: Array<number> | any }
-    year?: string,
-    genre?: string
-  },
-  translation_songs?: TranslationSongs[],
-  media?: SongMedia[],
-}
+import type { SongDetailType } from "./types";
 
 function imageFromBytes(
   data: number[],
