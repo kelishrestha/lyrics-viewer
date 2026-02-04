@@ -26,9 +26,6 @@ export default function AudioPlayer({
   isFetchingTranslations,
   fetchSyncedLyrics,
   fetchTranslations,
-  iconDisabled,
-  iconClassNames,
-  translationDisabled,
 }: {
   artist: string,
   setArtist: (artist: string) => void,
@@ -43,9 +40,6 @@ export default function AudioPlayer({
   isFetchingTranslations: boolean,
   fetchSyncedLyrics: (artist: string, title: string) => void,
   fetchTranslations: (artist: string, title: string) => void,
-  iconDisabled: boolean,
-  iconClassNames: string,
-  translationDisabled: boolean
 }) {
   const sourceAudioRef = useRef<HTMLAudioElement | null>(null);
   const [sourceAudioUrl, setSourceAudioUrl] = useState<any | null>(null);
@@ -172,6 +166,10 @@ export default function AudioPlayer({
       fetchSyncedLyrics(artist, title);
     }
   }
+
+  const translationDisabled = !title || !artist || isFetchingLyrics || isFetchingTranslations;
+  const iconDisabled = !title || !artist
+  const iconClassNames = iconDisabled ? 'text-gray-600' : 'text-amber-300'
 
   return (
     <>

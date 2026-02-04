@@ -169,9 +169,6 @@ export default function App() {
     setIsIframeLoading(false)
   }
 
-  const translationDisabled = !title || !artist || isFetchingLyrics || isFetchingTranslations;
-  const iconDisabled = !title || !artist
-  const iconClassNames = iconDisabled ? 'text-gray-600' : 'text-amber-300'
   const rawLyrics = songResponse?.raw_lyrics
 
   return (
@@ -192,9 +189,6 @@ export default function App() {
           isFetchingTranslations={isFetchingTranslations}
           fetchSyncedLyrics={fetchSyncedLyrics}
           fetchTranslations={fetchTranslations}
-          iconDisabled={iconDisabled}
-          iconClassNames={iconClassNames}
-          translationDisabled={translationDisabled}
         />
 
         <section className="my-9 border-b-2 border-amber-400" />
