@@ -1,7 +1,6 @@
-import { useState } from "react"
+import { useRef, useState } from "react"
 
 import { parseLRC, prepareFakeLyrics } from "./lyrics/lrcParser"
-import { resetSync } from "./lyrics/ManualSync"
 import type { LyricsResponseType } from "./lyrics/types"
 import AudioPlayer from "./player/AudioPlayer"
 import Loader from "./ui/Loader"
@@ -13,13 +12,16 @@ import { SongTranslations } from "./viewer/SongTranslations"
 import type { SongDetailType, SongResponseType, TranslationsResponseType } from "./viewer/types"
 
 const SongResponseInitial: SongResponseType = {
-  source: '',
+  source: 'none',
   lyrics: [],
   raw_lyrics: '',
   status: 'Please choose song to fetch lyrics from...',
   url: '',
   song_details: undefined
 }
+
+const API_URL = import.meta.env.VITE_BACKEND_API_URL
+
 export default function App() {
   const [artist, setArtist] = useState("")
   const [title, setTitle] = useState("")
@@ -30,9 +32,9 @@ export default function App() {
   const [isIframeLoading, setIsIframeLoading] = useState(false)
   const [isFetchingTranslations, setIsFetchingTranslations] = useState(false);
 
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const resetAll = () => {
-    resetSync()
     setIsFetchingLyrics(true)
     setFallbackUrl(null)
     setSongResponse({ ...SongResponseInitial, status: "Fetching lyrics..." })
@@ -44,7 +46,7 @@ export default function App() {
     resetAll()
 
     const res = await fetch(
-      `http://localhost:4000/synced_lyrics?artist=${encodeURIComponent(artistName)}&title=${encodeURIComponent(titleName)}`
+      `${API_URL}/synced_lyrics?artist=${encodeURIComponent(artistName)}&title=${encodeURIComponent(titleName)}`
     )
 
     const data: LyricsResponseType = await res.json()
@@ -91,7 +93,7 @@ export default function App() {
     resetAll()
 
     const res = await fetch(
-      `http://localhost:4000/lyrics?artist=${encodeURIComponent(artistName)}&title=${encodeURIComponent(titleName)}`
+      `${API_URL}/lyrics?artist=${encodeURIComponent(artistName)}&title=${encodeURIComponent(titleName)}`
     )
 
     const data: LyricsResponseType = await res.json()
@@ -129,7 +131,7 @@ export default function App() {
         }
       })
       setIsIframeLoading(true)
-      setFallbackUrl(`http://localhost:4000/proxy?url=${encodeURIComponent(data.url)}`)
+      setFallbackUrl(`${API_URL}/proxy?url=${encodeURIComponent(data.url)}`)
       setIsFetchingLyrics(false)
     }
     else {
@@ -149,7 +151,7 @@ export default function App() {
     if (!artistName || !titleName) return
 
     const res = await fetch(
-      `http://localhost:4000/translations?artist=${encodeURIComponent(artistName)}&title=${encodeURIComponent(titleName)}`
+      `${API_URL}/translations?artist=${encodeURIComponent(artistName)}&title=${encodeURIComponent(titleName)}`
     )
 
     const translations: TranslationsResponseType = await res.json();
@@ -176,6 +178,7 @@ export default function App() {
       {/* Search form starts */}
       <section key="lyrics-search" className="bg-zinc-800 p-3">
         <AudioPlayer
+          audioRef={audioRef}
           artist={artist}
           setArtist={setArtist}
           title={title}
@@ -213,7 +216,7 @@ export default function App() {
             { rawLyrics && (
               <div className="grid grid-cols-2 w-full">
                 {/* Floating Karaoke Overlay */}
-                <FloatingLyrics lyrics={songResponse?.lyrics || []} />
+                <FloatingLyrics lyrics={songResponse?.lyrics || []} audioRef={audioRef} />
                 <ScrollingContent lyrics={rawLyrics || ""} />
               </div>
             )}

@@ -1,11 +1,10 @@
 import '../styles/Visualizer.css';
 
-import { useEffect, useRef, useState } from "react";
+import { type RefObject, useEffect, useRef, useState } from "react";
 import { FileEarmarkMusic, Soundwave, Translate } from "react-bootstrap-icons";
 
 import LoadingCircleSpinner from "../animations/LoadingCircleSpinner";
 import { formatTime, parseLRC, prepareFakeLyrics } from "../lyrics/lrcParser";
-import { resetSync, startSync } from "../lyrics/ManualSync";
 import { PlayButton } from "../playerComponents/PlayButton";
 import ProgressBar from "../playerComponents/ProgressBar";
 import Visualizer from "../playerComponents/Visualizer";
@@ -26,6 +25,7 @@ export default function AudioPlayer({
   isFetchingTranslations,
   fetchSyncedLyrics,
   fetchTranslations,
+  audioRef,
 }: {
   artist: string,
   setArtist: (artist: string) => void,
@@ -40,8 +40,9 @@ export default function AudioPlayer({
   isFetchingTranslations: boolean,
   fetchSyncedLyrics: (artist: string, title: string) => void,
   fetchTranslations: (artist: string, title: string) => void,
+  audioRef: RefObject<HTMLAudioElement | null>,
 }) {
-  const sourceAudioRef = useRef<HTMLAudioElement | null>(null);
+  const sourceAudioRef = audioRef;
   const [sourceAudioUrl, setSourceAudioUrl] = useState<any | null>(null);
   const [progress, setProgress] = useState(0);
   const [timeElapsed, setTimeElapsed] = useState(0);
@@ -99,9 +100,9 @@ export default function AudioPlayer({
 	};
 
   const progressSeekEnd = (e) => {
-		updateCurrentTime(e.target.value);
-    if(songFinished){ setProgress(0) }
+    updateCurrentTime(e.target.value);
 		setDragging(false);
+    if (songFinished) { setSongFinished(false); }
 	};
 
   const handlePlayPause = () => {
@@ -127,9 +128,6 @@ export default function AudioPlayer({
 
     const audio = sourceAudioRef.current;
     if(audio){
-      audio.onplay = startSync
-      audio.onabort = resetSync
-      audio.onended = resetSync
       audio.play();
       audioContextRef.current?.resume();
     }

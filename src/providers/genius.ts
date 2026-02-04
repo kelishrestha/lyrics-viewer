@@ -12,7 +12,7 @@ import {
 
 dotenv.config()
 // Also try src/.env for projects that keep env alongside sources
-dotenv.config({ path: './src/.env' })
+dotenv.config({ path: './.env' })
 
 const GENIUS_TOKEN = process.env.GENIUS_TOKEN
 

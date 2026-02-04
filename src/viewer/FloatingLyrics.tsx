@@ -1,22 +1,24 @@
-import { useEffect, useState } from "react"
+import { type RefObject, useEffect, useState } from "react"
 
 import { RotateLyricsLine } from "../animations/RotateLyricsLine";
-import { getTime } from "../lyrics/ManualSync"
 import type { LyricLineType } from "../lyrics/types";
 
-export function FloatingLyrics({ lyrics }: { lyrics: LyricLineType[] }) {
+export function FloatingLyrics({ lyrics, audioRef }: { lyrics: LyricLineType[], audioRef: RefObject<HTMLAudioElement | null> }) {
   const [current, setCurrent] = useState<LyricLineType | null>(null)
-
+  console.log(lyrics, 8);
   useEffect(() => {
     let raf: number
 
     const loop = () => {
-      const t = getTime()
-      const line =
-        lyrics
-          .slice()
-          .reverse()
-          .find(l => t >= l.time) || null
+      const t = audioRef.current?.currentTime && (audioRef.current?.currentTime * 1000) || 0
+      let line: LyricLineType | null = null
+
+      for (let i = lyrics.length - 1; i >= 0; i--) {
+        if (t >= lyrics[i].time) {
+          line = lyrics[i]
+          break
+        }
+      }
 
       setCurrent(line)
       raf = requestAnimationFrame(loop)
@@ -24,7 +26,7 @@ export function FloatingLyrics({ lyrics }: { lyrics: LyricLineType[] }) {
 
     loop()
     return () => cancelAnimationFrame(raf)
-  }, [lyrics])
+  }, [lyrics, audioRef])
 
   return (
     <div className="text-center relative justify-center items-center flex
