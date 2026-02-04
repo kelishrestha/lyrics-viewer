@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react"
-import { getTime } from "../lyrics/ManualSync"
-import type { LyricLineType } from "../lyrics/lrcParser"
+
 import { RotateLyricsLine } from "../animations/RotateLyricsLine";
+import { getTime } from "../lyrics/ManualSync"
+import type { LyricLineType } from "../lyrics/types";
 
 export function FloatingLyrics({ lyrics }: { lyrics: LyricLineType[] }) {
   const [current, setCurrent] = useState<LyricLineType | null>(null)

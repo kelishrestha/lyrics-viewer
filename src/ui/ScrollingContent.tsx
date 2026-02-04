@@ -1,5 +1,6 @@
 import { motion, useScroll } from "motion/react"
 import { useRef } from "react"
+
 import { splitLyrics } from "../lyrics/lrcParser"
 
 export default function ScrollingContent({ lyrics } : { lyrics: string }) {

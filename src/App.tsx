@@ -1,15 +1,16 @@
 import { useState } from "react"
-import { FloatingLyrics } from "./viewer/FloatingLyrics"
+
 import { parseLRC, prepareFakeLyrics } from "./lyrics/lrcParser"
 import { resetSync } from "./lyrics/ManualSync"
+import type { LyricsResponseType } from "./lyrics/types"
+import AudioPlayer from "./player/AudioPlayer"
 import Loader from "./ui/Loader"
 import ScrollingContent from "./ui/ScrollingContent"
+import { FloatingLyrics } from "./viewer/FloatingLyrics"
+import IframeLoader from "./viewer/IframeLoader"
 import { SongDetail } from "./viewer/SongDetail"
 import { SongTranslations } from "./viewer/SongTranslations"
-import type { LyricsResponseType } from "./lyrics/types"
 import type { SongDetailType, SongResponseType, TranslationsResponseType } from "./viewer/types"
-import AudioPlayer from "./player/AudioPlayer"
-import IframeLoader from "./viewer/IframeLoader"
 
 const SongResponseInitial: SongResponseType = {
   source: '',

@@ -1,5 +1,6 @@
-import { motion, type Variants } from "motion/react"
 import '../App.css'
+
+import { motion, type Variants } from "motion/react"
 
 export default function ThreeDotsLoader() {
   const dotVariants: Variants = {

@@ -1,9 +1,10 @@
-import { Hono } from 'hono'
 import { serve } from '@hono/node-server'
+import { Hono } from 'hono'
 import { cors } from 'hono/cors'
+
 import { searchGenius } from './providers/genius.js'
-import { searchLyricsOVH } from './providers/lyricsOvh.js'
 import { searchLrcLib } from './providers/lrclib.js'
+import { searchLyricsOVH } from './providers/lyricsOvh.js'
 
 const app = new Hono()
 

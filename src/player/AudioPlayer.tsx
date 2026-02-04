@@ -1,15 +1,17 @@
+import '../styles/Visualizer.css';
+
 import { useEffect, useRef, useState } from "react";
-import { LocalAudioLoader } from "./LocalAudioLoader";
-import { PlayButton } from "../playerComponents/PlayButton";
 import { FileEarmarkMusic, Soundwave, Translate } from "react-bootstrap-icons";
-import Volume from "../playerComponents/Volume";
-import ProgressBar from "../playerComponents/ProgressBar";
-import Visualizer from "../playerComponents/Visualizer";
+
 import LoadingCircleSpinner from "../animations/LoadingCircleSpinner";
 import { formatTime, parseLRC, prepareFakeLyrics } from "../lyrics/lrcParser";
 import { resetSync, startSync } from "../lyrics/ManualSync";
-import '../styles/Visualizer.css';
+import { PlayButton } from "../playerComponents/PlayButton";
+import ProgressBar from "../playerComponents/ProgressBar";
+import Visualizer from "../playerComponents/Visualizer";
+import Volume from "../playerComponents/Volume";
 import type { SongDetailType, SongResponseType } from "../viewer/types";
+import { LocalAudioLoader } from "./LocalAudioLoader";
 
 export default function AudioPlayer({
   artist,

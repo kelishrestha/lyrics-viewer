@@ -1,9 +1,9 @@
 import { useEffect } from "react";
 
-let width = 350;
-let height = 125;
-let barScale = 1;
-let dataScale = 0.5;
+const width = 350;
+const height = 125;
+const barScale = 1;
+const dataScale = 0.5;
 
 const Visualizer = ({ analyser, source }: { analyser: AnalyserNode | null, source: any }) => {
   useEffect(() => {
@@ -12,20 +12,20 @@ const Visualizer = ({ analyser, source }: { analyser: AnalyserNode | null, sourc
     const oldCanvas = document.querySelector("#canvasWrapper canvas");
     if (oldCanvas) oldCanvas.remove();
 
-    let canvas = document.createElement("canvas");
+    const canvas = document.createElement("canvas");
     canvas.width = width;
     canvas.height = height;
     container?.appendChild(canvas);
 
-    let ctx = canvas?.getContext("2d");
+    const ctx = canvas?.getContext("2d");
 
     analyser.fftSize = 256;
 
-    let bufferLength = analyser.frequencyBinCount;
+    const bufferLength = analyser.frequencyBinCount;
 
-    let dataArray = new Uint8Array(bufferLength);
+    const dataArray = new Uint8Array(bufferLength);
 
-    let barWidth = (width / bufferLength) * barScale;
+    const barWidth = (width / bufferLength) * barScale;
     let barHeight;
     let x;
 
@@ -44,10 +44,10 @@ const Visualizer = ({ analyser, source }: { analyser: AnalyserNode | null, sourc
       for (let i = 0; i < bufferLength; i++) {
         barHeight = dataArray[i] * dataScale;
 
-        let t = i / bufferLength;
-        let r = (1 - t) * 255 + t * 2;
-        let g = (1 - t) * 238 + t * 215;
-        let b = (1 - t) * 8 + t * 242;
+        const t = i / bufferLength;
+        const r = (1 - t) * 255 + t * 2;
+        const g = (1 - t) * 238 + t * 215;
+        const b = (1 - t) * 8 + t * 242;
 
         ctx.fillStyle =
           "rgb(" +
