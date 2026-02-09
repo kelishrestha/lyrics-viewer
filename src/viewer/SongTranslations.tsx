@@ -1,8 +1,8 @@
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { getLangNameFromCode } from 'language-name-map'
-import { ChevronDown } from "react-bootstrap-icons";
+import { ChevronDown, Translate } from "react-bootstrap-icons";
 
-import type { SongDetailType } from './types';
+import type { TranslationSongs } from './types';
 
 const translationLabel = (lang: string) => {
   if(!lang) return null
@@ -10,15 +10,18 @@ const translationLabel = (lang: string) => {
   return getLangNameFromCode(lang)?.name || lang
 }
 
-export function SongTranslations({ song }: { song: SongDetailType }): JSX.Element {
-  if (!song.translation_songs) return null
+export function SongTranslations({ translations }: { translations: TranslationSongs[] }): JSX.Element {
+  if (!translations.length) return null
 
   return (
-    <Menu as="div" className="relative inline-block w-full">
-      <MenuButton className="inline-flex w-full justify-center gap-x-1.5 rounded-md bg-blue-800 hover:bg-blue-600
-        px-3 py-2 text-sm font-semibold text-white inset-ring-1 inset-ring-white/5">
-        See Translations
-        <ChevronDown aria-hidden="true" className="-mr-1 size-5 text-gray-400" />
+    <Menu as="div" className="relative inline-block w-fit">
+      <MenuButton className="inline-flex items-center gap-2 rounded-md bg-amber-400 px-3 py-1.5 text-sm/6
+                   font-semibold text-gray-900 shadow-inner shadow-white/10
+                   focus:not-data-focus:outline-none data-focus:outline data-focus:outline-white
+                   data-hover:bg-amber-600 data-open:bg-amber-700">
+        <Translate size={20} />
+        Translations
+        <ChevronDown aria-hidden="true" className="-mr-1 size-5 text-gray-900" />
       </MenuButton>
 
       <MenuItems
@@ -30,7 +33,7 @@ export function SongTranslations({ song }: { song: SongDetailType }): JSX.Elemen
       >
         <div className="py-1">
           {
-            song.translation_songs.map((translation) => (
+            translations.map((translation) => (
               <MenuItem>
                 <a
                   href={translation.url}

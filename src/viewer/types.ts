@@ -1,6 +1,6 @@
 import type { LyricLineType } from "../lyrics/types"
 
-type TranslationSongs = {
+export type TranslationSongs = {
   language: string,
   title: string,
   url: string

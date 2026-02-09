@@ -1,4 +1,6 @@
+import { Button } from "@headlessui/react"
 import { useRef, useState } from "react"
+import { FileEarmarkMusicFill } from "react-bootstrap-icons"
 
 import { parseLRC, prepareFakeLyrics } from "./lyrics/lrcParser"
 import type { LyricsResponseType } from "./lyrics/types"
@@ -31,6 +33,7 @@ export default function App() {
   const [isFetchingLyrics, setIsFetchingLyrics] = useState(false);
   const [isIframeLoading, setIsIframeLoading] = useState(false)
   const [isFetchingTranslations, setIsFetchingTranslations] = useState(false);
+  const [showFullLyrics, setShowFullLyrics] = useState(false)
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -148,22 +151,22 @@ export default function App() {
   async function fetchTranslations(artistName: string, titleName: string) {
     setIsFetchingTranslations(true)
 
-    if (!artistName || !titleName) return
+    if (!artistName || !titleName) {
+      setIsFetchingTranslations(false);
+      return
+    }
 
     const res = await fetch(
       `${API_URL}/translations?artist=${encodeURIComponent(artistName)}&title=${encodeURIComponent(titleName)}`
     )
 
-    const translations: TranslationsResponseType = await res.json();
-
+    const songTranslations: TranslationsResponseType = await res.json();
     if(res.status == 200){
-      setSongDetails((prev) => {
-        return {
-          ...prev,
-          translation_songs: translations.translations
-        }
-      })
+      const newTranslations = songTranslations.translations;
+      setSongDetails((prev) => ({ ...prev, translation_songs: newTranslations }));
+      setSongResponse((prev) => ({ ...prev!, song_details: { ...prev?.song_details, translation_songs: newTranslations }}));
     }
+
     setIsFetchingTranslations(false)
   }
 
@@ -176,7 +179,7 @@ export default function App() {
   return (
     <main className="grid grid-cols-5 h-lvh w-lvw">
       {/* Search form starts */}
-      <section key="lyrics-search" className="bg-zinc-800 p-3">
+      <section key="lyrics-search" className="bg-zinc-800 p-3 h-dvh overflow-y-auto">
         <AudioPlayer
           audioRef={audioRef}
           artist={artist}
@@ -194,12 +197,27 @@ export default function App() {
           fetchTranslations={fetchTranslations}
         />
 
-        <section className="my-9 border-b-2 border-amber-400" />
-
         {/* Song Details */}
         { !isFetchingLyrics && songDetails && (
-          <section className="flex flex-col gap-4">
-            <SongTranslations song={songResponse?.song_details || songDetails} />
+          <section className="my-4 flex flex-col gap-2 justify-center items-center">
+            <div className="flex gap-2">
+              { songResponse.raw_lyrics && (
+                <Button
+                  onClick={() => setShowFullLyrics((prev) => !prev)}
+                  className="
+                   inline-flex items-center gap-2 rounded-md bg-amber-400 px-3 py-1.5 text-sm/6
+                   font-semibold text-gray-900 shadow-inner shadow-white/10
+                   focus:not-data-focus:outline-none data-focus:outline data-focus:outline-white
+                   data-hover:bg-amber-600 data-open:bg-amber-700
+                  "
+                  title="View full lyrics"
+                >
+                  <FileEarmarkMusicFill size={20} />
+                  {showFullLyrics ? 'Hide' : 'Show'} full lyrics
+                </Button>
+              )}
+              <SongTranslations translations={songResponse?.song_details?.translation_songs || []} />
+            </div>
             <SongDetail song={songResponse?.song_details || songDetails} artist={artist} title={title} />
             <p className="text-sm italic justify-center items-center flex">Lyrics Source: {songResponse?.source}</p>
           </section>
@@ -214,10 +232,16 @@ export default function App() {
           <>
             {/* Inline Lyrics View (Optional, MVP Debug View) */}
             { rawLyrics && (
-              <div className="grid grid-cols-2 w-full">
+              <div className="flex w-full h-full relative">
                 {/* Floating Karaoke Overlay */}
-                <FloatingLyrics lyrics={songResponse?.lyrics || []} audioRef={audioRef} />
-                <ScrollingContent lyrics={rawLyrics || ""} />
+                <div className={`flex items-center justify-center transition-all duration-300 ease-in-out h-full ${showFullLyrics ? 'w-1/2' : 'w-full'}`}>
+                  <FloatingLyrics lyrics={songResponse?.lyrics || []} audioRef={audioRef} />
+                </div>
+                { showFullLyrics && (
+                  <div className="w-1/2 h-full">
+                    <ScrollingContent lyrics={rawLyrics || ""} showContent={showFullLyrics} />
+                  </div>
+                )}
               </div>
             )}
 

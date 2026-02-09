@@ -1,7 +1,5 @@
-import '../styles/Visualizer.css';
-
 import { type RefObject, useEffect, useRef, useState } from "react";
-import { FileEarmarkMusic, Soundwave, Translate } from "react-bootstrap-icons";
+import { MusicNoteList, Soundwave, Translate } from "react-bootstrap-icons";
 
 import LoadingCircleSpinner from "../animations/LoadingCircleSpinner";
 import { formatTime, parseLRC, prepareFakeLyrics } from "../lyrics/lrcParser";
@@ -61,7 +59,7 @@ export default function AudioPlayer({
     if(audio) {
       audio.volume = volume;
     }
-  }, [volume])
+  }, [volume, sourceAudioRef])
 
   const setTimeUpdate = () => {
     const audio = sourceAudioRef.current
@@ -167,7 +165,7 @@ export default function AudioPlayer({
 
   const translationDisabled = !title || !artist || isFetchingLyrics || isFetchingTranslations;
   const iconDisabled = !title || !artist
-  const iconClassNames = iconDisabled ? 'text-gray-600' : 'text-amber-300'
+  const iconClassNames = iconDisabled ? 'text-gray-600' : ( visualizer ? 'text-amber-600' : 'text-amber-300')
 
   return (
     <>
@@ -197,20 +195,21 @@ export default function AudioPlayer({
           onClick={() => setVisualizer((prev) => !prev)}
           disabled={iconDisabled}
           className="cursor-pointer disabled:text-gray-600"
+          title='Visualizer'
         >
           <Soundwave className={iconClassNames} size={25} />
-          {visualizer && <div className="dot" />}
         </button>
-        <button disabled={iconDisabled} onClick={() => fetchSyncedLyrics(artist, title)}>
+        <button disabled={iconDisabled} onClick={() => fetchSyncedLyrics(artist, title)} title="Fetch Lyrics">
           { isFetchingLyrics && <LoadingCircleSpinner width='w-6' height='h-6'/> }
           { !isFetchingLyrics &&
-            <FileEarmarkMusic className={`${iconDisabled ? "text-gray-600" : "text-amber-300"}`} size={25} />
+            <MusicNoteList className={`${iconDisabled ? "text-gray-600" : "text-amber-300"}`} size={25} />
           }
         </button>
         <button
           disabled={translationDisabled}
           onClick={() => fetchTranslations(artist, title)}
           className="cursor-pointer disabled:text-gray-600"
+          title='Fetch translations'
         >
           { isFetchingTranslations && <LoadingCircleSpinner width='w-6' height='h-6'/> }
           { !isFetchingTranslations && <Translate className={`${translationDisabled ? "text-gray-600" : "text-amber-300"}`} size={25} /> }

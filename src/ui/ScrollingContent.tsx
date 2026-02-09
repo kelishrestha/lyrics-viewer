@@ -3,9 +3,11 @@ import { useRef } from "react"
 
 import { splitLyrics } from "../lyrics/lrcParser"
 
-export default function ScrollingContent({ lyrics } : { lyrics: string }) {
+export default function ScrollingContent({ lyrics, showContent = false } : { lyrics: string, showContent: boolean }) {
   const containerRef = useRef<HTMLDivElement>(null)
   const { scrollYProgress } = useScroll({ container: containerRef })
+
+  if(!showContent) return null
 
   return (
     <>

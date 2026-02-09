@@ -9,7 +9,10 @@ export function removeAccents(str: string) {
 };
 
 export function removeTrailingBrackets(input: string) {
-  return input.replace(/\(\(\)\)/g, '').replace(/\(\)\(\)/g, '').replace(/\(\)/g, '').trim();
+  return input.replace(/\(\(\)\)/g, '')
+              .replace(/\(\)\(\)/g, '')
+              .replace(/\(\)/g, '')
+              .trim();
 }
 
 export function removeSpecialCharacters(input: string) {
@@ -17,7 +20,7 @@ export function removeSpecialCharacters(input: string) {
 }
 
 export function removeNormalCharacters(input: string){
-  return input.replace(/[a-zA-Z0-9\s]/g, "").trim();
+  return input.replace(/[a-zA-Z0-9\s]/g, " ").trim();
 }
 
 export function normalizeText(text: string) {

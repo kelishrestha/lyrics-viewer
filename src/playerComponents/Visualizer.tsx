@@ -1,7 +1,7 @@
 import { useEffect, useRef } from "react";
 
 const barScale = 1;
-const dataScale = 0.5;
+const dataScale = 0.8;
 
 const Visualizer = ({
   analyser,

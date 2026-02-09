@@ -8,6 +8,7 @@ export function PlayButton({ isPlaying, toggleIsPlaying, isDisabled }: { isPlayi
       onClick={toggleIsPlaying}
       disabled={isDisabled}
       className="cursor-pointer"
+      title={isPlaying ? "Pause" : "Play"}
     >
       {!isPlaying && (
         <PlayCircle className={ isDisabled ? 'text-gray-600' : 'text-amber-300'} size={25}/>
