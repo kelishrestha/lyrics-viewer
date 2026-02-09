@@ -35,7 +35,7 @@ export function FloatingLyrics({
   }, [lyrics, audioRef]);
 
   return (
-    <div className="pointer-events-none relative inset-0 flex items-center justify-center px-4 w-full h-100vh">
+    <div className="pointer-events-none relative inset-0 flex items-center justify-center px-4 w-full h-full">
       <div
         className="
           bg-gray-800/80 backdrop-blur-md

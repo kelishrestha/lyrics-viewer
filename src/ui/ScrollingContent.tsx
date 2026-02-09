@@ -11,7 +11,7 @@ export default function ScrollingContent({ lyrics, showContent = false } : { lyr
 
   return (
     <>
-      <div ref={containerRef} className="h-dvh overflow-y-auto relative">
+      <div ref={containerRef} className="h-full overflow-y-auto relative">
         <motion.div
           id="scroll-indicator"
           style={{

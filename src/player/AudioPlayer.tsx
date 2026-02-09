@@ -188,7 +188,7 @@ export default function AudioPlayer({
           setIsPlaying(false)
         }}
       ></audio>
-      <div className="flex flex-row justify-between pb-2">
+      <div className="flex flex-row flex-wrap justify-between pb-2 gap-2">
         <PlayButton isPlaying={isPlaying} toggleIsPlaying={handlePlayPause} isDisabled={iconDisabled} />
         <button
           aria-label="Visualizer"

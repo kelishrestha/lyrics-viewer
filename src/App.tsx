@@ -177,9 +177,15 @@ export default function App() {
   const rawLyrics = songResponse?.raw_lyrics
 
   return (
-    <main className="grid grid-cols-5 h-lvh w-lvw">
+    <main className="flex flex-col md:grid md:grid-cols-5 h-lvh w-lvw overflow-hidden">
       {/* Search form starts */}
-      <section key="lyrics-search" className="bg-zinc-800 p-3 h-dvh overflow-y-auto">
+      <section
+        key="lyrics-search"
+        className="
+        md:bg-zinc-800 p-3 w-full h-auto max-h-[40vh] md:max-h-none md:h-full md:col-span-2 lg:col-span-1 overflow-y-auto shrink-0 z-10 shadow-md md:shadow-none
+        bg-black
+        "
+      >
         <AudioPlayer
           audioRef={audioRef}
           artist={artist}
@@ -226,19 +232,19 @@ export default function App() {
       {/* Search form ends */}
 
       {/* Lyrics section starts */}
-      <section key="lyrics-viewer" className="col-span-4">
+      <section key="lyrics-viewer" className="flex-1 md:col-span-3 lg:col-span-4 overflow-hidden relative">
         { isFetchingLyrics && <Loader status={songResponse.status} /> }
         { !isFetchingLyrics && (
           <>
             {/* Inline Lyrics View (Optional, MVP Debug View) */}
             { rawLyrics && (
-              <div className="flex w-full h-full relative">
+              <div className="flex flex-col lg:flex-row w-full h-full relative">
                 {/* Floating Karaoke Overlay */}
-                <div className={`flex items-center justify-center transition-all duration-300 ease-in-out h-full ${showFullLyrics ? 'w-1/2' : 'w-full'}`}>
+                <div className={`flex items-center justify-center transition-all duration-300 ease-in-out ${showFullLyrics ? 'h-1/2 w-full lg:h-full lg:w-1/2' : 'h-full w-full'}`}>
                   <FloatingLyrics lyrics={songResponse?.lyrics || []} audioRef={audioRef} />
                 </div>
                 { showFullLyrics && (
-                  <div className="w-1/2 h-full">
+                  <div className="w-full h-1/2 lg:w-1/2 lg:h-full border-t lg:border-t-0 lg:border-l border-white/10">
                     <ScrollingContent lyrics={rawLyrics || ""} showContent={showFullLyrics} />
                   </div>
                 )}
