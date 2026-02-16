@@ -1,13 +1,13 @@
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/react'
 import { getLangNameFromCode } from 'language-name-map'
-import { ChevronDown, Translate } from "react-bootstrap-icons";
+import { ChevronExpand, Translate } from "react-bootstrap-icons";
 
 import type { TranslationSongs } from './types';
 
 const translationLabel = (lang: string) => {
   if(!lang) return null
 
-  return getLangNameFromCode(lang)?.name || lang
+  return (getLangNameFromCode(lang)?.name || lang).toLocaleUpperCase()
 }
 
 export function SongTranslations({ translations }: { translations: TranslationSongs[] }) {
@@ -21,7 +21,7 @@ export function SongTranslations({ translations }: { translations: TranslationSo
                    data-hover:bg-primary/80 data-open:bg-primary/90">
         <Translate size={20} />
         Translations
-        <ChevronDown aria-hidden="true" className="-mr-1 size-5 text-gray-900" />
+        <ChevronExpand aria-hidden="true" className="-mr-1 size-5 text-gray-900" />
       </MenuButton>
 
       <MenuItems

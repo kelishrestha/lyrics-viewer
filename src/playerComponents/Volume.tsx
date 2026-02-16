@@ -1,6 +1,6 @@
 import "../styles/Volume.css";
 
-import { useEffect, useRef, useState, type RefObject } from "react";
+import { type RefObject,useEffect, useRef, useState } from "react";
 
 const volumeColor = "var(--color-primary)"
 const disabledColor = "var(--color-primary-inactive)"

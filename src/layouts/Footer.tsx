@@ -3,7 +3,7 @@ import { useState } from 'react'
 import { Github, GlobeCentralSouthAsia, HeartFill } from 'react-bootstrap-icons'
 
 export default function Footer() {
-  let [isOpen, setIsOpen] = useState(false)
+  const [isOpen, setIsOpen] = useState(false)
 
   function open() {
     setIsOpen(true)

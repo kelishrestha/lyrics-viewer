@@ -2,6 +2,7 @@ import { Button } from "@headlessui/react"
 import { useRef, useState } from "react"
 import { FileEarmarkMusicFill } from "react-bootstrap-icons"
 
+import Footer from "./layouts/Footer"
 import { parseLRC, prepareFakeLyrics } from "./lyrics/lrcParser"
 import type { LyricsResponseType } from "./lyrics/types"
 import AudioPlayer from "./player/AudioPlayer"
@@ -12,7 +13,6 @@ import IframeLoader from "./viewer/IframeLoader"
 import { SongDetail } from "./viewer/SongDetail"
 import { SongTranslations } from "./viewer/SongTranslations"
 import type { SongDetailType, SongResponseType, TranslationsResponseType } from "./viewer/types"
-import Footer from "./layouts/Footer"
 
 const SongResponseInitial: SongResponseType = {
   source: 'none',
@@ -250,7 +250,7 @@ export default function App() {
           <>
             {/* Inline Lyrics View (Optional, MVP Debug View) */}
             { rawLyrics && (
-              <div className="flex flex-col lg:flex-row w-full h-full relative">
+              <div className="flex flex-col lg:flex-row w-full h-full relative bg-primary-background-alt">
                 {/* Floating Karaoke Overlay */}
                 <div className={`flex items-center justify-center transition-all duration-300 ease-in-out ${showFullLyrics ? 'h-1/2 w-full lg:h-full lg:w-1/2' : 'h-full w-full'}`}>
                   <FloatingLyrics lyrics={songResponse?.lyrics || []} audioRef={audioRef} />

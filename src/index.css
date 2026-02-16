@@ -7,6 +7,7 @@
   --color-primary-inactive: var(--color-primary-inactive);
   --color-primary-lyrics: var(--color-primary-lyrics);
   --color-primary-background: var(--color-primary-background);
+  --color-primary-background-alt: var(--color-primary-background-alt)
 }
 
 @media (prefers-color-scheme: light) {
@@ -34,7 +35,7 @@
     --color-primary-inactive: oklch(44.6% 0.03 256.802); /* gray-600 */
     --color-primary-lyrics: #ffffff; /* white */
     --color-primary-background: oklch(37.1% 0 0); /* neutral-700 */
-    --color-primary-background-alt: #242424; /* neutral-800 */
+    --color-primary-background-alt: oklch(44.2% 0.017 285.786); /* zinc-600 */
 
     color: var(--color-primary-lyrics);
     background-color: var(--color-primary-background);
