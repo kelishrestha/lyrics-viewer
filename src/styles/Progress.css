@@ -6,9 +6,14 @@
   -webkit-appearance: none;
   appearance: none;
   background: transparent;
-  border: 2px solid rgba(255, 238, 8, 0.5);
+  border: 2px solid var(--color-primary);
   width: 100%;
   height: 0.5rem;
+}
+
+.progress__slider:disabled {
+  border-color: var(--color-primary-inactive);
+  cursor: not-allowed;
 }
 
 .progress__slider:focus {
@@ -24,19 +29,31 @@
   appearance: none;
   width: 0.875rem;
   height: 0.875rem;
-  outline: 2px solid var(--primary-color);
-  background: #f8ef00;
+  outline: 2px solid var(--color-primary);
+  background: var(--color-primary);
   cursor: pointer;
   position: relative;
+}
+
+.progress__slider:disabled::-webkit-slider-thumb {
+  outline-color: var(--color-primary-inactive);
+  background-color: var(--color-primary-inactive);
+  cursor: not-allowed;
 }
 
 .progress__slider::-moz-range-thumb {
   width: 0.875rem;
   height: 0.875rem;
-  outline: 2px solid var(--primary-color);
-  background: #f8ef00;
+  outline: 2px solid var(--color-primary);
+  background: var(--color-primary);
   cursor: pointer;
   position: relative;
+}
+
+.progress__slider:disabled::-moz-range-thumb {
+  outline-color: var(--color-primary-inactive);
+  background-color: var(--color-primary-inactive);
+  cursor: not-allowed;
 }
 
 .progress__time {
@@ -44,7 +61,7 @@
   font-weight: 500;
   font-size: 0.75rem;
   line-height: 0.9375rem;
-  color: var(--primary-color);
+  color: var(--color-primary);
   display: flex;
   justify-content: space-between;
   align-items: center;

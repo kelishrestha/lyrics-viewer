@@ -33,7 +33,7 @@ export default function ScrollingContent({ lyrics, showContent = false } : { lyr
 
 function LyricsView({ lyrics }: { lyrics: string[][] }) {
   return (
-    <div className="space-y-6 text-center text-lg leading-relaxed text-white m-9">
+    <div className="space-y-6 text-center text-lg leading-relaxed text-primary-lyrics m-9">
       {lyrics.map((paragraph, i) => (
         <p key={i} className="opacity-90">
           {paragraph.map((line, j) => (

@@ -6,6 +6,7 @@
   position: absolute;
   top: 2rem;
   left: -0.99rem;
+  z-index: 1;
 }
 
 .volume__sliderContainer {
@@ -35,8 +36,8 @@
   position: absolute;
   top: 4.375rem;
   left: -2.5rem;
-  background: #1a1a1a;
-  border: 2px solid #f8ef00;
+  background: var(--color-primary-background);
+  border: 2px solid var(--color-primary);
   width: 8.5rem;
   height: 0.5rem;
   cursor: pointer;
@@ -47,7 +48,7 @@
 }
 
 .volume__slider:focus::-webkit-slider-thumb {
-  outline: 2px solid var(--primary-color);
+  outline: 2px solid var(--color-primary);
 }
 
 .volume__slider::-webkit-slider-thumb {
@@ -55,9 +56,9 @@
   appearance: none;
   width: 1.0625rem;
   height: 1.6875rem;
-  outline: 2px solid var(--primary-color);
+  outline: 2px solid var(--color-primary);
   border-radius: 0.3125rem;
-  background: #f8ef00;
+  background: var(--color-primary);
   cursor: pointer;
   position: relative;
 }

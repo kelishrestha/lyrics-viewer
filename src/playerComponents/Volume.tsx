@@ -2,8 +2,8 @@ import "../styles/Volume.css";
 
 import { useEffect, useRef, useState, type RefObject } from "react";
 
-const volumeColor = "#FFEE08"
-const disabledColor = '#4a5565'
+const volumeColor = "var(--color-primary)"
+const disabledColor = "var(--color-primary-inactive)"
 
 const useOnClickOutside = (ref: RefObject<HTMLDivElement | null>, handler: (event: MouseEvent | TouchEvent) => void) => {
   useEffect(() => {
@@ -116,7 +116,7 @@ const Volume = ({ value, onChange, isDisabled }: { value: number; onChange: (e: 
             >
               <path
                 d="M5.09434 111H0.999996V149H53V1H12.6352L6.82795 6.69967L0.999996 12.8964V82H5.09434H6.09434V83V110V111H5.09434Z"
-                fill="#040C1F"
+                fill={ 'var(--color-primary-background' }
                 stroke={isDisabled ? disabledColor : volumeColor}
                 strokeWidth={2}
               />

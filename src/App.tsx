@@ -190,8 +190,8 @@ export default function App() {
       <section
         key="lyrics-search"
         className="
-        md:bg-zinc-800 p-3 w-full h-auto max-h-[40vh] md:max-h-none md:h-full md:col-span-2 lg:col-span-1 overflow-y-auto shrink-0 z-10 shadow-md md:shadow-none flex flex-col
-        bg-black
+        md:bg-zinc-100 dark:md:bg-zinc-700 p-3 w-full h-auto max-h-[50vh] md:max-h-none md:h-full md:col-span-2 lg:col-span-1 overflow-y-auto shrink-0 z-10 shadow-md md:shadow-none flex flex-col
+        bg-white dark:bg-black
         "
       >
         <AudioPlayer
@@ -214,20 +214,20 @@ export default function App() {
         {/* Song Details */}
         { !isFetchingLyrics && songDetails && (
           <section className="my-4 flex flex-col gap-2 justify-center items-center">
-            <div className="flex gap-2">
+            <div className="flex sm:flex-col 2xl:flex-row gap-2">
               { songResponse.raw_lyrics && (
                 <Button
                   onClick={() => setShowFullLyrics((prev) => !prev)}
                   className="
-                   inline-flex items-center gap-2 rounded-md bg-amber-400 px-3 py-1.5 text-sm/6
+                   inline-flex items-center gap-2 rounded-md bg-primary px-3 py-1.5 text-sm/6
                    font-semibold text-gray-900 shadow-inner shadow-white/10
                    focus:not-data-focus:outline-none data-focus:outline data-focus:outline-white
-                   data-hover:bg-amber-600 data-open:bg-amber-700
+                   data-hover:bg-primary/80 data-open:bg-primary/90
                   "
                   title="View full lyrics"
                 >
                   <FileEarmarkMusicFill size={20} />
-                  {showFullLyrics ? 'Hide' : 'Show'} full lyrics
+                  {showFullLyrics ? 'Hide' : 'Show'} lyrics
                 </Button>
               )}
               <SongTranslations translations={songResponse?.song_details?.translation_songs || []} />
@@ -237,7 +237,7 @@ export default function App() {
           </section>
         )}
 
-        <div className="mt-auto self-center">
+        <div className="mt-auto self-center max-w-50">
           <Footer />
         </div>
       </section>
@@ -256,7 +256,7 @@ export default function App() {
                   <FloatingLyrics lyrics={songResponse?.lyrics || []} audioRef={audioRef} />
                 </div>
                 { showFullLyrics && (
-                  <div className="w-full h-1/2 lg:w-1/2 lg:h-full border-t lg:border-t-0 lg:border-l border-white/10">
+                  <div className="w-full h-1/2 lg:w-1/2 lg:h-full border-t lg:border-t-0 lg:border-l border-zinc-300/50 dark:border-white/10">
                     <ScrollingContent lyrics={rawLyrics || ""} showContent={showFullLyrics} />
                   </div>
                 )}
@@ -275,7 +275,7 @@ export default function App() {
               !rawLyrics && !fallbackUrl && (
                 <div className="relative w-full h-full overflow-hidden inset-0 flex items-center justify-center bg-black/40 z-10">
                   <div className="text-center">
-                    <p className="mt-4 text-gray-300">{songResponse.status}</p>
+                    <p className="mt-4 text-gray-600 dark:text-gray-300">{songResponse.status}</p>
                   </div>
                 </div>
               )

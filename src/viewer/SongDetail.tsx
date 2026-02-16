@@ -18,7 +18,7 @@ export function SongDetail({ song, artist, title }: { song: SongDetailType, arti
   const albumCoverImage = song.album?.cover_art_url || coverUrl
 
   return (
-    <section className="m-1 rounded-2xl h-fit w-fit bg-linear-to-r from-sky-500 to-indigo-500 p-6 md:block hidden">
+    <section className="m-1 rounded-2xl h-fit w-fit bg-linear-to-bl from-pink-400 to-indigo-500 p-6 md:block hidden">
       <img
         src={albumCoverImage} alt={song.album?.name}
         className="w-full h-fit rounded-md"/>

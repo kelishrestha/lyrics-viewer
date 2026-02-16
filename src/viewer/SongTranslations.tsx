@@ -15,10 +15,10 @@ export function SongTranslations({ translations }: { translations: TranslationSo
 
   return (
     <Menu as="div" className="relative inline-block w-fit">
-      <MenuButton className="inline-flex items-center gap-2 rounded-md bg-amber-400 px-3 py-1.5 text-sm/6
+      <MenuButton className="inline-flex items-center gap-2 rounded-md bg-primary px-3 py-1.5 text-sm/6
                    font-semibold text-gray-900 shadow-inner shadow-white/10
                    focus:not-data-focus:outline-none data-focus:outline data-focus:outline-white
-                   data-hover:bg-amber-600 data-open:bg-amber-700">
+                   data-hover:bg-primary/80 data-open:bg-primary/90">
         <Translate size={20} />
         Translations
         <ChevronDown aria-hidden="true" className="-mr-1 size-5 text-gray-900" />
@@ -34,7 +34,7 @@ export function SongTranslations({ translations }: { translations: TranslationSo
         <div className="py-1">
           {
             translations.map((translation) => (
-              <MenuItem>
+              <MenuItem key={translation.language}>
                 <a
                   href={translation.url}
                   className="block px-4 py-2 text-sm text-gray-300 cursor-pointer

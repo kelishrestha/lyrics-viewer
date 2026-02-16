@@ -11,10 +11,10 @@ export function PlayButton({ isPlaying, toggleIsPlaying, isDisabled }: { isPlayi
       title={isPlaying ? "Pause" : "Play"}
     >
       {!isPlaying && (
-        <PlayCircle className={ isDisabled ? 'text-gray-600' : 'text-amber-300'} size={25}/>
+        <PlayCircle className={ isDisabled ? 'text-primary-inactive' : 'text-primary'} size={25}/>
       )}
       {isPlaying && (
-        <PauseCircle className={ isDisabled ? 'text-gray-600' : 'text-amber-300'} size={25}/>
+        <PauseCircle className={ isDisabled ? 'text-primary-inactive' : 'text-primary'} size={25}/>
       )}
     </button>
   )

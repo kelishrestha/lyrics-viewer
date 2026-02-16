@@ -165,7 +165,7 @@ export default function AudioPlayer({
 
   const translationDisabled = !title || !artist || isFetchingLyrics || isFetchingTranslations;
   const iconDisabled = !title || !artist
-  const iconClassNames = iconDisabled ? 'text-gray-600' : ( visualizer ? 'text-amber-600' : 'text-amber-300')
+  const iconClassNames = iconDisabled ? 'text-primary-inactive' : ( visualizer ? 'text-secondary' : 'text-primary')
 
   return (
     <>
@@ -194,7 +194,7 @@ export default function AudioPlayer({
           aria-label="Visualizer"
           onClick={() => setVisualizer((prev) => !prev)}
           disabled={iconDisabled}
-          className="cursor-pointer disabled:text-gray-600"
+          className="cursor-pointer disabled:text-primary-inactive"
           title='Visualizer'
         >
           <Soundwave className={iconClassNames} size={25} />
@@ -202,17 +202,17 @@ export default function AudioPlayer({
         <button disabled={iconDisabled} onClick={() => fetchSyncedLyrics(artist, title)} title="Fetch Lyrics">
           { isFetchingLyrics && <LoadingCircleSpinner width='w-6' height='h-6'/> }
           { !isFetchingLyrics &&
-            <MusicNoteList className={`${iconDisabled ? "text-gray-600" : "text-amber-300"}`} size={25} />
+            <MusicNoteList className={`${iconDisabled ? "text-primary-inactive" : "text-primary"}`} size={25} />
           }
         </button>
         <button
           disabled={translationDisabled}
           onClick={() => fetchTranslations(artist, title)}
-          className="cursor-pointer disabled:text-gray-600"
+          className="cursor-pointer disabled:text-primary-inactive"
           title='Fetch translations'
         >
           { isFetchingTranslations && <LoadingCircleSpinner width='w-6' height='h-6'/> }
-          { !isFetchingTranslations && <Translate className={`${translationDisabled ? "text-gray-600" : "text-amber-300"}`} size={25} /> }
+          { !isFetchingTranslations && <Translate className={`${translationDisabled ? "text-primary-inactive" : "text-primary"}`} size={25} /> }
         </button>
         <Volume
           value={volume * 100}

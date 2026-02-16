@@ -28,7 +28,7 @@ const ProgressBar = ({
         className="progress__slider"
         onChange={onChange}
         style={{
-          background: `linear-gradient(90deg, var(--primary-color) ${Math.ceil(
+          background: `linear-gradient(90deg, ${isDisabled ? 'var(--color-primary-inactive)' : 'var(--color-primary)'} ${Math.ceil(
             value
           )}%, transparent ${Math.ceil(value)}%)`,
         }}
@@ -38,7 +38,7 @@ const ProgressBar = ({
         onClick={progressSeekEnd}
         disabled={isDisabled}
       />
-      <div className="progress__time">
+      <div className="progress__time" style={{ color: isDisabled ? 'var(--color-primary-inactive)' : 'var(--color-primary)' }}>
         <span className="progress__timeElapsed">{timeElapsed}</span>
         <span className="progress__timeLength">{songLength}</span>
       </div>
