@@ -164,7 +164,14 @@ export default function App() {
     if(res.status == 200){
       const newTranslations = songTranslations.translations;
       setSongDetails((prev) => ({ ...prev, translation_songs: newTranslations }));
-      setSongResponse((prev) => ({ ...prev!, song_details: { ...prev?.song_details, translation_songs: newTranslations }}));
+      setSongResponse((prev) => ({
+        ...prev!,
+        song_details: {
+          album: prev.song_details?.album || songDetails?.album,
+          media: prev.song_details?.media || songDetails?.media,
+          translation_songs: newTranslations
+        } as SongDetailType
+      }));
     }
 
     setIsFetchingTranslations(false)
