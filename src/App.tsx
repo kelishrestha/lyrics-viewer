@@ -12,6 +12,7 @@ import IframeLoader from "./viewer/IframeLoader"
 import { SongDetail } from "./viewer/SongDetail"
 import { SongTranslations } from "./viewer/SongTranslations"
 import type { SongDetailType, SongResponseType, TranslationsResponseType } from "./viewer/types"
+import Footer from "./layouts/Footer"
 
 const SongResponseInitial: SongResponseType = {
   source: 'none',
@@ -189,7 +190,7 @@ export default function App() {
       <section
         key="lyrics-search"
         className="
-        md:bg-zinc-800 p-3 w-full h-auto max-h-[40vh] md:max-h-none md:h-full md:col-span-2 lg:col-span-1 overflow-y-auto shrink-0 z-10 shadow-md md:shadow-none
+        md:bg-zinc-800 p-3 w-full h-auto max-h-[40vh] md:max-h-none md:h-full md:col-span-2 lg:col-span-1 overflow-y-auto shrink-0 z-10 shadow-md md:shadow-none flex flex-col
         bg-black
         "
       >
@@ -235,6 +236,10 @@ export default function App() {
             <p className="text-sm italic justify-center items-center flex">Lyrics Source: {songResponse?.source}</p>
           </section>
         )}
+
+        <div className="mt-auto self-center">
+          <Footer />
+        </div>
       </section>
       {/* Search form ends */}
 

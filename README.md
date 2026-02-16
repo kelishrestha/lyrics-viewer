@@ -25,6 +25,8 @@ Mobile view:
 - Toggle equalizer
 - Volume up/down
 
+_Note: No content saved while building this application._
+
 ## Dependencies
 
 - [Lrclib](https://lrclib.net/)
