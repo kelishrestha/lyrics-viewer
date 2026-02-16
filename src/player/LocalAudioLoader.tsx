@@ -81,7 +81,7 @@ export function LocalAudioLoader({ onMetadata, setSourceAudio, audioRef }: Props
       <button
         type="button"
         onClick={() => fileInputRef.current?.click()}
-        className="mr-4 py-2 px-4 w-32 rounded-full border-0 text-sm font-semibold bg-secondary/10 text-secondary hover:bg-secondary/20 cursor-pointer"
+        className="mr-4 py-2 px-4 w-40 rounded-full border-0 text-sm font-semibold bg-secondary/10 text-secondary hover:bg-secondary/20 cursor-pointer"
       >
         Choose File
       </button>
