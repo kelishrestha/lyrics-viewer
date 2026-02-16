@@ -12,6 +12,7 @@ const app = new Hono()
 const allowedOrigins = [
   'http://localhost:5173',
   'http://127.0.0.1:5173',
+  'https://lyrics-viewer.onrender.com'
 ]
 app.use('*', cors({
   origin: (origin) => (origin && allowedOrigins.includes(origin)) ? origin : '*',
@@ -140,6 +141,11 @@ app.get('/proxy', async c => {
     'X-Frame-Options': 'ALLOWALL',
     'Content-Security-Policy': "frame-ancestors 'self' *",
   })
+})
+
+// Status API
+app.get('/status', c => {
+  return c.json({ status: 'ok', message: 'Lyrics wrapper API is running'})
 })
 
 // Start server (Node runtime)
