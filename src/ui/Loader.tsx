@@ -1,6 +1,6 @@
 import ThreeDotsLoader from "../animations/ThreeDotsLoader"
 
-export default function Loader({status}: { status: string }): JSX.Element {
+export default function Loader({status}: { status: string }) {
   return (
     <div className="relative w-full h-full overflow-hidden inset-0 flex items-center justify-center bg-black/40 z-10">
       <div className="text-center">

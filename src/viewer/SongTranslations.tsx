@@ -10,7 +10,7 @@ const translationLabel = (lang: string) => {
   return getLangNameFromCode(lang)?.name || lang
 }
 
-export function SongTranslations({ translations }: { translations: TranslationSongs[] }): JSX.Element {
+export function SongTranslations({ translations }: { translations: TranslationSongs[] }) {
   if (!translations.length) return null
 
   return (

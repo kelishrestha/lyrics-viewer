@@ -1,4 +1,4 @@
-import { type RefObject, useEffect, useRef, useState } from "react";
+import { type RefObject, useEffect, useRef, useState, type ChangeEvent } from "react";
 import { MusicNoteList, Soundwave, Translate } from "react-bootstrap-icons";
 
 import LoadingCircleSpinner from "../animations/LoadingCircleSpinner";
@@ -97,7 +97,7 @@ export default function AudioPlayer({
     }
 	};
 
-  const progressSeekEnd = (e) => {
+  const progressSeekEnd = (e: ChangeEvent<HTMLInputElement>) => {
     updateCurrentTime(e.target.value);
 		setDragging(false);
     if (songFinished) { setSongFinished(false); }

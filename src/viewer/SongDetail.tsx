@@ -10,7 +10,7 @@ function imageFromBytes(
 }
 
 
-export function SongDetail({ song, artist, title }: { song: SongDetailType, artist: string, title: string}): JSX.Element {
+export function SongDetail({ song, artist, title }: { song: SongDetailType, artist: string, title: string}) {
   if(!song) return null
 
   const releaseDate = song.album?.release_date_for_display || song.album?.year;

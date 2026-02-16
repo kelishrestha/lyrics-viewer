@@ -1,14 +1,14 @@
 import "../styles/Volume.css";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type RefObject } from "react";
 
 const volumeColor = "#FFEE08"
 const disabledColor = '#4a5565'
 
-const useOnClickOutside = (ref, handler) => {
+const useOnClickOutside = (ref: RefObject<HTMLDivElement | null>, handler: (event: MouseEvent | TouchEvent) => void) => {
   useEffect(() => {
-    const listener = (event) => {
-      if (!ref.current || ref.current.contains(event.target)) {
+    const listener = (event: MouseEvent | TouchEvent) => {
+      if (!ref.current || ref.current.contains(event.target as Node)) {
         return;
       }
       handler(event);
@@ -27,7 +27,7 @@ const useOnClickOutside = (ref, handler) => {
 const Volume = ({ value, onChange, isDisabled }: { value: number; onChange: (e: any) => void, isDisabled: boolean }) => {
   const [isOpen, setIsOpen] = useState(false);
 
-  const divRef = useRef(null);
+  const divRef = useRef<HTMLDivElement>(null);
   useOnClickOutside(divRef, () => setIsOpen(false));
 
   const toggleIsOpen = () => {
