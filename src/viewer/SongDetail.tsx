@@ -1,0 +1,37 @@
+import type { SongDetailType } from "./types";
+
+function imageFromBytes(
+  data: number[],
+  mimeType: string = "image/jpeg"
+): string {
+  const uint8Array = new Uint8Array(data)
+  const blob = new Blob([uint8Array], { type: mimeType })
+  return URL.createObjectURL(blob)
+}
+
+
+export function SongDetail({ song, artist, title }: { song: SongDetailType, artist: string, title: string}) {
+  if(!song) return null
+
+  const releaseDate = song.album?.release_date_for_display || song.album?.year;
+  const coverUrl = imageFromBytes(song.album?.picture?.data, song.album?.picture?.format)
+  const albumCoverImage = song.album?.cover_art_url || coverUrl
+
+  return (
+    <section className="m-1 rounded-2xl h-fit w-fit bg-linear-to-bl from-pink-400 to-indigo-500 p-6 md:block hidden">
+      <img
+        src={albumCoverImage} alt={song.album?.name}
+        className="w-full h-fit rounded-md"/>
+      <p className="flex flex-col my-2 gap-1 text-center">
+        <span className="font-bold text-2xl">{title}</span>
+        <span className="font-bold text-gray-300">{artist}</span>
+        <span className="text-sm text-gray-300 mt-2">Album</span>
+        <span className="font-bold text-gray-300">{song.album?.name}</span>
+      </p>
+      <p className="flex flex-col text-gray-300 gap-1 text-center">
+        <span className="italic text-xs">Release date: {releaseDate}</span>
+        { song.album?.genre && <span className="italic text-xs">Genre: {song.album?.genre}</span> }
+      </p>
+    </section>
+  )
+}
