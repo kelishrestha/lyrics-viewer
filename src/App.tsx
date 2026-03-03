@@ -1,6 +1,7 @@
 import { Button } from "@headlessui/react"
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { FileEarmarkMusicFill } from "react-bootstrap-icons"
+import { toast } from 'sonner';
 
 import Footer from "./layouts/Footer"
 import { parseLRC, prepareFakeLyrics } from "./lyrics/lrcParser"
@@ -35,14 +36,41 @@ export default function App() {
   const [isIframeLoading, setIsIframeLoading] = useState(false)
   const [isFetchingTranslations, setIsFetchingTranslations] = useState(false);
   const [showFullLyrics, setShowFullLyrics] = useState(false)
+  const [serverStatus, setServerStatus] = useState(false);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
+  const isServerUpRef = useRef(false);
 
   const resetAll = () => {
     setIsFetchingLyrics(true)
     setFallbackUrl(null)
     setSongResponse({ ...SongResponseInitial, status: "Fetching lyrics..." })
   }
+
+  const checkServerStatus = async() => {
+    if (serverStatus || isServerUpRef.current) return
+
+    try {
+      if (serverStatus == false) {
+        isServerUpRef.current = true
+        const statusCheck = await fetch(`${API_URL}/status`)
+        toast.warning("Please wait while the app is connecting to the server.")
+        if (statusCheck.status == 200) {
+          setServerStatus(true)
+        }
+      }
+    }
+    catch (error) {
+      isServerUpRef.current = false
+      setServerStatus(false)
+      console.log('Server not connected')
+    }
+  }
+
+  useEffect(() => {
+    // Check server status if it is up or not
+    checkServerStatus()
+  }, [])
 
   async function fetchSyncedLyrics(artistName: string, titleName: string) {
     if (!artistName || !titleName) return
